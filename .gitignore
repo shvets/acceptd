@@ -13,6 +13,7 @@
 .dat*
 .repl_history
 build/
+.idea
 
 ## Documentation cache and generated files:
 /.yardoc/
