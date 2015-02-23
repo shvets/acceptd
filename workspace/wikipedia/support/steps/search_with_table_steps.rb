@@ -1,7 +1,4 @@
 steps_for :search_with_table do
-  step "I am within wikipedia.com" do
-  end
-
   step "I am on wikipedia.com" do
     visit('/')
   end

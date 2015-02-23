@@ -40,5 +40,7 @@ RSpec::Core::RakeTask.new do |task|
 end
 
 task :turnip do
-  system "CONFIG_FILE=workspace/wikipedia/acceptance_config.yml rspec -r acceptd/acceptd_config -r turnip/rspec workspace/wikipedia/features/search_with_drivers.feature"
+  result = system "CONFIG_FILE=workspace/wikipedia/acceptance_config.yml rspec -r acceptd/acceptance_config -r turnip/rspec workspace/wikipedia/features/search_with_drivers.feature"
+
+  puts result
 end

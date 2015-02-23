@@ -1,0 +1,1 @@
+-r acceptd/acceptance_config -r turnip/rspec
