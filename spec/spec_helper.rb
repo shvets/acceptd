@@ -4,4 +4,4 @@ require 'acceptance_test/acceptance_config'
 
 $: << File.expand_path("workspace/support")
 
-AcceptanceConfig.instance.configure "wikipedia"
+AcceptanceConfig.instance.configure "workspace", "wikipedia"
