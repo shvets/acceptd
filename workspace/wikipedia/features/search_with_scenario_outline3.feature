@@ -10,4 +10,4 @@ Feature: Using Wikipedia
 
     Examples:
       | keyword | result |something_else |
-      | file:spec/data.yml, key:test1 || |
+      | file:spec/wikipedia/data.yml, key:test1 || |

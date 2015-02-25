@@ -10,4 +10,4 @@ Feature: Using Wikipedia
 
     Examples:
       | keyword | result | something_else |
-      | file:spec/data.csv ||             |
+      | file:spec/wikipedia/data.csv ||             |
