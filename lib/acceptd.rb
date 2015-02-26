@@ -1,2 +1,2 @@
-require 'accepted/version'
-require 'accepted/accepted'
+require 'acceptd/version'
+require 'acceptd/app'

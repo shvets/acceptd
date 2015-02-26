@@ -5,6 +5,11 @@ group :development do
   gem "gemcutter"
 end
 
-gem "sinatra"
+group :default do
+  gem "sinatra"
+  gem "vegas"
+  gem "sass"
+  gem "puma"
 
-gem "acceptance_test"
+  gem "acceptance_test"
+end

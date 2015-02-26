@@ -12,6 +12,8 @@ Gem::Specification.new do |spec|
 
   spec.files         = `git ls-files`.split($\)
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
+  spec.bindir        = "bin"
+  spec.executables   = ['acceptd']
   spec.require_paths = ["lib"]
   spec.version       = Acceptd::VERSION
   spec.license       = "MIT"
