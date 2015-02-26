@@ -2,6 +2,8 @@ ENV['CONFIG_FILE'] = "workspace/wikipedia/acceptance_config.yml"
 
 require 'acceptance_test/acceptance_config'
 
-$: << File.expand_path("workspace/support")
+ENV['CONFIG_FILE'] = "workspace/wikipedia/acceptance_config.yml"
+ENV['DATA_DIR'] = "workspace/wikipedia/acceptance_data"
+
 
 AcceptanceConfig.instance.configure "workspace", "wikipedia"
