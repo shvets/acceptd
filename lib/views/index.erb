@@ -5,8 +5,18 @@
     <p class="lead">Select your configuration.</p>
   </div>
 
-  <h3>Web Application URL</h3>
-  <p>Select browser you want to run your script(s) with.</p>
+  <h3>1. Web Application URL</h3>
+  <p>Enter URL of web site you want to test.</p>
+  <div class="row">
+    <div class="col-lg-10">
+      <input type="text" name="webapp_url" value="<%= webapp_url %>"/>
+    </div>
+  </div>
+
+  <hr>
+
+  <h3>2. Browser</h3>
+  <p>Select the browser you want to run your script(s) with.</p>
   <div class="row">
     <div class="col-lg-10">
       <input type="radio" name="browser" value="firefox" <%= checked(browser, 'firefox') %>>Firefox</input>
@@ -20,52 +30,32 @@
 
   <hr>
 
-  <h3>Browser</h3>
-  <p>Select browser you want to run your script(s) with.</p>
+  <h3>3. Driver</h3>
+  <p>Select the driver you want to use.</p>
   <div class="row">
     <div class="col-lg-10">
-      <input type="radio" name="browser" value="firefox" <%= checked(browser, 'firefox') %>>Firefox</input>
+      <input type="radio" name="driver" value="selenium" <%= checked(driver, 'selenium') %>>Selenium</input>
     </div>
   </div>
   <div class="row">
     <div class="col-lg-10">
-      <input type="radio" name="browser" value="chrome" <%= checked(browser, 'chrome') %>>Chrome</input>
-    </div>
-  </div>
-
-  <hr>
-
-  <h3>Driver</h3>
-  <p>Select browser you want to run your script(s) with.</p>
-  <div class="row">
-    <div class="col-lg-10">
-      <input type="radio" name="browser" value="firefox" <%= checked(browser, 'firefox') %>>Firefox</input>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-lg-10">
-      <input type="radio" name="browser" value="chrome" <%= checked(browser, 'chrome') %>>Chrome</input>
+      <input type="radio" name="driver" value="webkit" <%= checked(driver, 'chrome') %>>Webkit</input>
     </div>
   </div>
 
   <hr>
 
-  <h3>Timeout in seconds</h3>
-  <p>Select browser you want to run your script(s) with.</p>
+  <h3>4. Timeout in seconds</h3>
+  <p>Select the time after which script command should be timed out.</p>
   <div class="row">
     <div class="col-lg-10">
-      <input type="radio" name="browser" value="firefox" <%= checked(browser, 'firefox') %>>Firefox</input>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-lg-10">
-      <input type="radio" name="browser" value="chrome" <%= checked(browser, 'chrome') %>>Chrome</input>
+      <input type="text" name="timeout_in_seconds" value="<%= timeout_in_seconds %>"/>
     </div>
   </div>
 
   <hr>
 
-  <h3>Tests:</h3>
+  <h3>5. Tests:</h3>
   <p>Select acceptance script(s) you want to run.</p>
 
   <div class="row">

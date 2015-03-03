@@ -1,6 +1,10 @@
 require 'sinatra'
 require 'sass'
 
+require "sinatra/reloader" if development?
+
+# require_relative 'app_helper'
+
 module Acceptd
   class App < Sinatra::Base
     set :views, "#{File.expand_path(File.dirname(__FILE__))}/../views"
@@ -14,7 +18,11 @@ module Acceptd
     get '/' do
       workspace_dir = File.expand_path("workspace")
       project = "wikipedia"
-      browser ="firefox"
+
+      webapp_url = "http://localhost:4567"
+      browser = "firefox"
+      driver = "selenium"
+      timeout_in_seconds = "10"
 
       files = Dir.glob("#{workspace_dir}/#{project}/**/*.feature")
 
@@ -22,7 +30,9 @@ module Acceptd
         files[index] = file[workspace_dir.size+1..-1]
       end
 
-      locals = {workspace_dir: workspace_dir,project: project, browser: browser, files: files}
+      locals = {workspace_dir: workspace_dir, project: project,  webapp_url: webapp_url,
+                browser: browser, driver: driver, timeout_in_seconds: timeout_in_seconds,
+                files: files}
 
       erb :index, {}, locals
     end
