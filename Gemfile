@@ -7,6 +7,7 @@ group :development do
 end
 
 group :default do
+  gem"rspec"
   gem "sinatra"
   gem "vegas"
   gem "sass"
