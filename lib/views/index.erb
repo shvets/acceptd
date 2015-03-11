@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" ng-app="app">
 
   <div class="panel panel-primary">
     <div class="panel-heading text-center">
@@ -100,6 +100,12 @@
           <div class="col-lg-2">
             <button class="btn btn-info">Save Configuration</button>
           </div>
+
+          <div ng-controller="MainController as mainCtrl">
+            <button ng-click="mainCtrl.get()">GET</button>
+            Result : {{result}}
+          </div>
+
         </div>
       </section>
     </div>

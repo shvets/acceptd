@@ -1,4 +1,6 @@
 require 'sinatra'
+require "better_errors"
+require 'json'
 require 'sass'
 
 require "sinatra/reloader" if development?
@@ -10,12 +12,24 @@ module Acceptd
     set :views, "#{File.expand_path(File.dirname(__FILE__))}/../views"
     set :public_dir, "#{File.expand_path(File.dirname(__FILE__))}/../../public"
 
+    # before do
+    #   content_type :json
+    # end
+
+    configure :development do
+      use BetterErrors::Middleware
+
+      BetterErrors.application_root = __dir__
+    end
+
     get '/stylesheet.css' do
       headers 'Content-Type' => 'text/css; charset=utf-8'
       sass :stylesheet
     end
 
     get '/' do
+      # raise "oops"
+
       workspace_dir = File.expand_path("workspace")
       project = "wikipedia"
 
@@ -42,6 +56,26 @@ module Acceptd
 
       erb :run
     end
+
+    get '/test' do
+      content_type :json
+      { message: 'Hello World!' }.to_json
+    end
+
+    # http://samurails.com/tutorial/cors-with-angular-js-and-sinatra/
+
+    get '/movie' do
+      { result: "Monster University" }.to_json
+    end
+
+    post '/movie' do
+      { result: params[:movie] }.to_json
+    end
+
+    # not_found do
+    #   content_type :json
+    #   halt 404, { error: 'URL not found' }.to_json
+    # end
 
     helpers do
       def checked(current, value)

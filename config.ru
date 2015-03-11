@@ -1,13 +1,16 @@
 require "bundler/setup"
 
-$LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__), "lib")))
+unless defined? Acceptd
+  $LOAD_PATH << File.join(__dir__, 'lib')
 
-require 'acceptd'
+  require 'acceptd'
+end
 
 trap(:INT) { exit }
 
 app = Rack::Builder.new {
   use Rack::CommonLogger
+
   run Acceptd::App
 }.to_app
 
