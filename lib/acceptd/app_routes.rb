@@ -35,14 +35,11 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
   end
 
   get '/run' do
+    p params
+
     system "rspec workspace/wikipedia/features/search_with_drivers.feature"
 
     erb :run
-  end
-
-  get '/test' do
-    content_type :json
-    { message: 'Hello World!' }.to_json
   end
 
   # http://samurails.com/tutorial/cors-with-angular-js-and-sinatra/
