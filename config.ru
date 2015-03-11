@@ -15,3 +15,5 @@ app = Rack::Builder.new {
 }.to_app
 
 run app
+
+#`open http://localhost:9292`

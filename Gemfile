@@ -9,7 +9,8 @@ end
 group :default do
   gem"rspec"
   gem "sinatra"
-  require 'json'
+  gem 'multi_json'
+  gem "yajl-ruby"
   gem "vegas"
   gem "sass"
   gem "puma"
