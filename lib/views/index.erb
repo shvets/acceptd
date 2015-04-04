@@ -5,105 +5,146 @@
       <h1><i><b>Acceptd</b></i> Control Center</h1>
     </div>
 
-    <div class="panel-body">
-      <section class="well">
-        <h3>Web Application URL</h3>
-
-        <div class="row">
-          <div class="col-lg-6">
-            <input type="url" name="webapp_url" class="form-control" placeholder="URL of web site you want to test" value="<%= webapp_url %>"/>
-          </div>
-        </div>
-      </section>
-
-      <section class="well">
-        <h3>Browser</h3>
-
-        <div class="row">
-          <div class="col-lg-4">
-            <div class="radio">
+    <form ng-controller="ScriptParamsController as scriptParamsCtrl">
+      <div class="panel-body">
+        <section class="well">
+          <div class="row">
+            <div class="col-lg-3 h3">
               <label>
-                <input type="radio" name="browser" value="firefox" <%= checked(browser, 'firefox') %>>
-                Firefox
+                Configuration
               </label>
             </div>
-            <div class="radio">
+
+            <div class="col-lg-2 h3">
+              <button class="btn btn-info" ng-click="scriptParamsCtrl.load()">Load</button>
+            </div>
+
+            <div class="col-lg-2 h3">
+              <button class="btn btn-info" ng-click="scriptParamsCtrl.save()">Save</button>
+            </div>
+
+          </div>
+        </section>
+
+        <section class="well">
+          <div class="row">
+            <div class="col-lg-3 h3">
               <label>
-                <input type="radio" name="browser" value="chrome" <%= checked(browser, 'chrome') %>>
-                Chrome
+                Project
               </label>
             </div>
-          </div>
-        </div>
-      </section>
 
-      <section class="well">
-        <h3>Driver</h3>
-
-        <div class="row">
-          <div class="col-lg-4">
-            <div class="radio">
-              <label>
-                <input type="radio" name="driver" value="selenium" <%= checked(driver, 'selenium') %>>
-                Selenium
-              </label>
-            </div>
-            <div class="radio">
-              <label>
-                <input type="radio" name="driver" value="webkit" <%= checked(driver, 'chrome') %>>
-                Webkit
-              </label>
+            <div class="col-lg-9 h3">
+              <select ng-model="scriptParams.selectedProject" class="form-control"
+                      ng-options="project for project in scriptParams.projects">
+              </select>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section class="well">
-        <h3>Timeout in seconds</h3>
+        <section class="well">
+          <div class="row">
+            <div class="col-lg-3 h3">
+              <label>
+                Web Application URL
+              </label>
+            </div>
 
-        <div class="row">
-          <div class="col-lg-2">
-            <input type="text" class="form-control" name="timeout_in_seconds" placeholder="Timeout in seconds" value="<%= timeout_in_seconds %>"/>
+            <div class="col-lg-9 h3">
+              <input type="url" ng-model="scriptParams.webapp_url" class="form-control" placeholder="URL of web site you want to test"/>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section class="well">
-        <h3>Selected Tests</h3>
+        <section class="well">
+          <div class="row">
+            <div class="col-lg-3 h3">
+              <label>
+                Timeout in seconds
+              </label>
+            </div>
 
-        <span id="helpBlock" class="help-block">Select acceptance script(s) you want to run.</span>
-
-        <div class="row">
-          <div class="col-lg-6">
-            <select class="form-control" multiple>
-              <% files.each do |file| %>
-                <option value="one"><%= file %></option>
-              <% end %>
-            </select>
+            <div class="col-lg-2 h3">
+              <input type="text" ng-model="scriptParams.timeout_in_seconds" class="form-control" placeholder="Timeout in seconds"/>
+            </div>
           </div>
-          <div class="col-lg-2" ng-controller="MainController as mainCtrl">
-            <form action="/run">
-              <button ng-click="mainCtrl.run(1, 2)" class="btn btn-primary btn-block">Run</button>
+        </section>
 
-              <div class="progress">
-                <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
-                  <span class="sr-only">20% Complete</span>
-                </div>
+        <section class="well">
+          <div class="row">
+
+            <div class="col-lg-3 h3">
+              <label>
+                Browser
+              </label>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="radio">
+                <label>
+                  <input type="radio" ng-model="scriptParams.browser" ng-checked="scriptParams.browser == 'firefox'">
+                  Firefox
+                </label>
               </div>
-            </form>
+              <div class="radio">
+                <label>
+                  <input type="radio" ng-model="scriptParams.browser" ng-checked="scriptParams.browser == 'chrome'">
+                  Chrome
+                </label>
+              </div>
+            </div>
           </div>
+        </section>
 
-          <div class="col-lg-2">
-            <button class="btn btn-info">Load Configuration</button>
+        <section class="well">
+          <div class="row">
+            <div class="col-lg-3 h3">
+              <label>
+                Driver
+              </label>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="radio">
+                <label>
+                  <input type="radio" ng-model="scriptParams.driver" ng-checked="scriptParams.driver == 'selenium'">
+                  Selenium
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" ng-model="scriptParams.driver" ng-checked="scriptParams.driver == 'webkit'">
+                  Webkit
+                </label>
+              </div>
+            </div>
           </div>
+        </section>
 
-          <div class="col-lg-2">
-            <button class="btn btn-info">Save Configuration</button>
+        <section class="well">
+          <h3>Selected Tests</h3>
+
+          <span id="helpBlock" class="help-block">Select acceptance script(s) you want to run.</span>
+
+          <div class="row">
+            <div class="col-lg-6">
+              <select ng-model="scriptParams.selectedFiles" class="form-control"
+                      ng-options="file for file in scriptParams.files" multiple>
+              </select>
+            </div>
+            <div class="col-lg-2">
+              <button class="btn btn-primary btn-block" ng-click="scriptParamsCtrl.run_script()">Run</button>
+
+              <!--<div class="progress">-->
+                <!--<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">-->
+                  <!--<span class="sr-only">20% Complete</span>-->
+                <!--</div>-->
+              <!--</div>-->
+            </div>
           </div>
-
-        </div>
-      </section>
-    </div>
+        </section>
+      </div>
+    </form>
 
   </div>
 
