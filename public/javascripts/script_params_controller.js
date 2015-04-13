@@ -22,13 +22,20 @@
     });
   }
 
-  function buildParamsQuery(params) {
+  function buildParamsQuery(params, paramsNames) {
     var paramsQuery = "";
 
     angular.forEach(params, function(value, key) {
       var separator = (paramsQuery == "") ? "" : "&";
 
-      paramsQuery += separator + key + "=" + value;
+      if(paramsNames == undefined) {
+        paramsQuery += separator + key + "=" + value;
+      }
+      else {
+        if(paramsNames.indexOf(key) >= 0) {
+          paramsQuery += separator + key + "=" + value;
+        }
+      }
     });
 
     return paramsQuery;
@@ -76,7 +83,11 @@
   ScriptParamsController.prototype.run_script = function() {
     var self = this;
 
-    var url = this.settings.baseUrl + "/run?" + buildParamsQuery(this.scope.script_params);
+    var paramsNames = [
+      'selected_project', 'webapp_url', 'timeout_in_seconds', 'browser', 'driver', 'selected_files'
+    ];
+
+    var url = this.settings.baseUrl + "/run?" + buildParamsQuery(this.scope.script_params, paramsNames);
 
     var intervalPromise;
 
@@ -103,16 +114,27 @@
 
     this.scope.start();
 
-    var successHandler = function(result) {
-      self.scope.result = result;
-      self.scope.complete();
+    var addResultHandler = function(result) {
+      self.scope.result += result.result;
     };
 
     var errorHandler = function() {
+      self.scope.progressbar.status = 'error';
+    };
+
+    var completeHandler = function() {
       self.scope.complete();
     };
 
-    this.http.get(url).success(successHandler).error(errorHandler);
+    var selectedFiles = this.scope.script_params.selected_files.split(",");
+
+    for(var i=0; i < selectedFiles.length; i++) {
+      var currentUrl = url + "&selected_file=" + selectedFiles[i];
+
+      this.http.get(currentUrl).success(addResultHandler).error(errorHandler);
+    }
+
+    completeHandler();
   };
 
 })();

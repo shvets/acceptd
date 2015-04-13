@@ -2,9 +2,12 @@ require "acceptd/routes_base"
 
 require 'yaml'
 require 'active_support/core_ext/hash'
+require 'script_executor'
+require 'rspec'
 
 class Acceptd::AppRoutes < Acceptd::RoutesBase
   ACCEPTD_CONFIG_FILE_NAME = ".acceptd.yaml"
+  WORKSPACE_DIR = 'workspace'
 
   set :views, "#{File.expand_path(File.dirname(__FILE__))}/../views"
   set :public_dir, "#{File.expand_path(File.dirname(__FILE__))}/../../public"
@@ -29,13 +32,25 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
   end
 
   get '/run' do
-    p params
+    ENV['DRIVER'] = params['driver']
+    ENV['BROWSER'] = params['browser']
+    ENV['TIMEOUT'] = params['timeout_in_seconds']
 
-    sleep 4
+    selected_project = params['selected_project']
+    selected_file = params['selected_file']
 
-    p "rspec workspace/wikipedia/features/search_with_drivers.feature"
+    spec_helper_filename = generate_spec_helper WORKSPACE_DIR, selected_project
 
-    erb :run
+    basedir = "#{WORKSPACE_DIR}/#{selected_project}"
+
+    rspec_params = "-r turnip/rspec -r acceptance_test/acceptance_config -I#{basedir} -I#{File.dirname(spec_helper_filename)}"
+
+    executor = ScriptExecutor.new
+
+    result = executor.execute script: "rspec #{rspec_params} #{WORKSPACE_DIR}/#{selected_file}",
+                              capture_output: true, suppress_output: true
+
+    {result: result}.to_json
   end
 
   helpers do
@@ -49,9 +64,7 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
   def load_config file_name
     config = {}
 
-    workspace_dir = "workspace"
-
-    projects = projects(workspace_dir)
+    projects = projects(WORKSPACE_DIR)
 
     if File.exist?(file_name)
       config.merge!(YAML.load_file(file_name))
@@ -66,9 +79,9 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
       config['selected_files'] = []
     end
 
-    config['workspace_dir'] = workspace_dir
+    config['workspace_dir'] = WORKSPACE_DIR
     config['projects'] = projects
-    config['files'] = feature_files(workspace_dir, config['selected_project'])
+    config['files'] = feature_files(WORKSPACE_DIR, config['selected_project'])
 
     config
   end
@@ -100,4 +113,30 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
 
     files
   end
+
+  def generate_spec_helper workspace_dir, selected_project
+    tmp_dir = "tmp/#{selected_project}"
+    spec_helper_filename = "#{tmp_dir}/spec_helper.rb"
+
+    FileUtils.makedirs(tmp_dir)
+
+    File.open(spec_helper_filename, "w") do |file|
+      file.write <<-GROCERY_LIST
+require 'acceptance_test/acceptance_config'
+
+ENV['CONFIG_DIR'] = "#{workspace_dir}/#{selected_project}"
+ENV['DATA_DIR'] = "#{workspace_dir}/#{selected_project}/acceptance_data"
+
+AcceptanceConfig.instance.configure "#{workspace_dir}", app_name: "#{selected_project}",
+                                    enable_external_source: true,
+                                    ignore_case_in_steps: true
+RSpec.configure do |c|
+  c.add_formatter 'documentation'
+end
+      GROCERY_LIST
+    end
+
+    spec_helper_filename
+  end
+
 end

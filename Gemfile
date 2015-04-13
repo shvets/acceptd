@@ -16,6 +16,7 @@ group :default do
   gem "puma"
 
   gem "acceptance_test"
+  gem "script_executor"
 
   gem "better_errors"
   gem "binding_of_caller"

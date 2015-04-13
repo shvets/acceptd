@@ -11,6 +11,6 @@ driver: selenium
 
 timeout_in_seconds: 40
 
-#browser_binaries:
-#  firefox: /Applications/Firefox.app/Contents/MacOS/firefox-bin
+browser_binaries:
+  firefox: /opt/homebrew-cask/Caskroom/firefox/latest/Firefox.app/Contents/MacOS/firefox-bin
 #  chrome: /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome

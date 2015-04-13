@@ -15,7 +15,7 @@
               </label>
             </div>
 
-            <div class="col-lg-9 h3">
+            <div class="col-lg-6 h3">
               <select ng-model="script_params.selected_project" class="form-control"
                       ng-options="project for project in script_params.projects">
               </select>
@@ -31,7 +31,7 @@
               </label>
             </div>
 
-            <div class="col-lg-9 h3">
+            <div class="col-lg-6 h3">
               <input type="url" ng-model="script_params.webapp_url" class="form-control"
                      placeholder="URL of web site you want to test"/>
             </div>
@@ -55,7 +55,6 @@
 
         <section class="well">
           <div class="row">
-
             <div class="col-lg-3 h3">
               <label>
                 Browser
@@ -105,37 +104,64 @@
         </section>
 
         <section class="well">
-          <h3>Selected Tests</h3>
-
-          <span id="helpBlock" class="help-block">Select acceptance script(s) you want to run.</span>
+          <div class="row">
+            <div class="col-lg-9 h3">
+              <label>
+                Selected Tests
+              </label>
+            </div>
+          </div>
 
           <div class="row">
-            <div class="col-lg-6">
-              <select ng-model="script_params.selected_files" class="form-control" multiple>
+            <div class="col-lg-12">
+              <span id="helpBlock" class="help-block">Select acceptance script(s) you want to run.</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-12">
+              <select ng-model="script_params.selected_files" class="form-control" multiple size="15">
                 <option ng-selected="script_params.selected_files.indexOf(file) >=0"
                         ng-repeat="file in script_params.files" value="{{file}}">{{file}}</option>
               </select>
             </div>
-
-            <div class="col-lg-2">
-              <button class="btn btn-primary btn-block" ng-click="scriptParamsCtrl.run_script()">Run</button>
-            </div>
-
-            <div class="col-lg-2">
-              <button class="btn btn-info" ng-click="scriptParamsCtrl.save_config()">Save Parameters</button>
-            </div>
           </div>
+        </section>
 
-          <hr />
-
+        <section class="well">
           <div class="row">
-            <div class="col-lg-12">
-              <progressbar type="success" value="progressbar.value" max="100">
+            <div class="col-lg-1">
+              <button class="btn btn-info" ng-click="scriptParamsCtrl.save_config()">Save</button>
+            </div>
+            <div class="col-lg-1">
+              <button class="btn btn-info" ng-click="scriptParamsCtrl.load_config()">Load</button>
+            </div>
+            <div class="col-lg-1">
+              <button class="btn btn-primary" ng-click="scriptParamsCtrl.run_script()">Run</button>
+            </div>
+
+            <div class="col-lg-9">
+              <progressbar ng-hide="progressbar.value < 1" type="success" value="progressbar.value" max="100">
                 <i>{{progressbar.status == 'success' ? "Success!" : ""}}</i>
               </progressbar>
             </div>
           </div>
+        </section>
 
+        <section class="well">
+          <div class="row">
+            <div class="col-lg-12 h3">
+              <label>
+                Output
+              </label>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-12">
+              <textarea class="output" rows="10" ng-model="result"></textarea>
+            </div>
+          </div>
         </section>
       </div>
     </form>
