@@ -5,15 +5,21 @@
 
   namespace.controller("ScriptParamsController", ScriptParamsController);
 
-  function ScriptParamsController($scope, $http, Settings, $timeout, $interval) {
+  function ScriptParamsController($scope, $http, Settings, $timeout, $interval, StreamService, $q, Progressbar) {
     this.scope = $scope;
     this.http = $http;
     this.settings = Settings;
     this.timeout = $timeout;
     this.interval = $interval;
+    this.streamService = StreamService;
+    this.q = $q;
 
     this.scope.script_params = {};
-    this.scope.progressbar = {value: 0, status: 'new'};
+    this.scope.result = "";
+
+    this.progressbar = new Progressbar(this);
+
+    this.scope.progressbar = this.progressbar.control;
 
     var self = this;
 
@@ -39,14 +45,6 @@
     });
 
     return paramsQuery;
-  }
-
-  function incrementProgressbar(progressbar) {
-    progressbar.value = progressbar.value+10;
-
-    if(progressbar.value == 100) {
-      progressbar.value = 0;
-    }
   }
 
   ScriptParamsController.prototype.load_config = function() {
@@ -89,52 +87,36 @@
 
     var url = this.settings.baseUrl + "/run?" + buildParamsQuery(this.scope.script_params, paramsNames);
 
-    var intervalPromise;
-
-    self.scope.start = function() {
-      self.scope.progressbar.value = 0;
-      self.scope.progressbar.status = 'new';
-
-      intervalPromise = self.interval(function () {
-          incrementProgressbar(self.scope.progressbar);
-        },
-        1000);
-    };
-
-    this.scope.$on('$destroy', function () {
-      $interval.cancel(intervalPromise);
-    });
-
-    this.scope.complete = function () {
-      self.scope.progressbar.value = 100;
-      self.scope.progressbar.status = 'success';
-
-      self.interval.cancel(intervalPromise);
-    };
-
-    this.scope.start();
+    self.progressbar.start();
 
     var addResultHandler = function(result) {
       self.scope.result += result.result;
     };
 
     var errorHandler = function() {
-      self.scope.progressbar.status = 'error';
+      self.progressbar.error();
     };
 
     var completeHandler = function() {
-      self.scope.complete();
+      self.progressbar.stop();
     };
+
+    var promises = [];
 
     var selectedFiles = this.scope.script_params.selected_files.split(",");
 
     for(var i=0; i < selectedFiles.length; i++) {
       var currentUrl = url + "&selected_file=" + selectedFiles[i];
 
-      this.http.get(currentUrl).success(addResultHandler).error(errorHandler);
+      promises.push(this.http.get(currentUrl).success(addResultHandler).error(errorHandler));
     }
 
-    completeHandler();
+    this.q.all(promises).then(completeHandler);
+  };
+
+  ScriptParamsController.prototype.run_script2 = function() {
+    this.streamService.stream(this.settings.baseUrl, this);
   };
 
 })();
+

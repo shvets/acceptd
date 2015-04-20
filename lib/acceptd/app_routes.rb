@@ -53,6 +53,21 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
     {result: result}.to_json
   end
 
+  get '/stream_init' do
+    session[:position] = 0
+    session[:max] = 10
+
+    {done: session[:position] == session[:max]}.to_json
+  end
+
+  get '/stream_next' do
+    session[:position] += 1
+
+    sleep 1
+
+    {done: session[:position] == session[:max], result: "abc"}.to_json
+  end
+
   helpers do
     def checked(current, value)
       (current == value) ? "checked" : ""

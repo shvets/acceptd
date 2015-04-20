@@ -5,6 +5,8 @@ class Acceptd::RoutesBase < Sinatra::Base
 
   use Rack::Deflater
 
+  enable :sessions
+
   before do
     # http://thibaultdenizet.com/tutorial/cors-with-angular-js-and-sinatra/
 
