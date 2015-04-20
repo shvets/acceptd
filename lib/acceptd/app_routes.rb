@@ -32,23 +32,7 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
   end
 
   get '/run' do
-    ENV['DRIVER'] = params['driver']
-    ENV['BROWSER'] = params['browser']
-    ENV['TIMEOUT'] = params['timeout_in_seconds']
-
-    selected_project = params['selected_project']
-    selected_file = params['selected_file']
-
-    spec_helper_filename = generate_spec_helper WORKSPACE_DIR, selected_project
-
-    basedir = "#{WORKSPACE_DIR}/#{selected_project}"
-
-    rspec_params = "-r turnip/rspec -r acceptance_test/acceptance_config -I#{basedir} -I#{File.dirname(spec_helper_filename)}"
-
-    executor = ScriptExecutor.new
-
-    result = executor.execute script: "rspec #{rspec_params} #{WORKSPACE_DIR}/#{selected_file}",
-                              capture_output: true, suppress_output: true
+    result = execute_scripts params
 
     {result: result}.to_json
   end
@@ -57,13 +41,19 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
     session[:position] = 0
     session[:max] = 10
 
-    {done: session[:position] == session[:max]}.to_json
+    result = execute_scripts params
+
+    p result
+
+    {done: session[:position] == session[:max], result: ""}.to_json
   end
 
   get '/stream_next' do
     session[:position] += 1
 
-    sleep 1
+    # sleep 1
+
+    p session[:buffer]
 
     {done: session[:position] == session[:max], result: "abc"}.to_json
   end
@@ -154,4 +144,32 @@ end
     spec_helper_filename
   end
 
+  def execute_scripts params
+    ENV['DRIVER'] = params['driver']
+    ENV['BROWSER'] = params['browser']
+    ENV['TIMEOUT'] = params['timeout_in_seconds']
+
+    selected_project = params['selected_project']
+    selected_file = params['selected_file']
+
+    scripts = if selected_file
+                ["#{WORKSPACE_DIR}/#{selected_file}"]
+              else
+                selected_files = params['selected_files'].split(",")
+                selected_files.collect {|selected_file| "#{WORKSPACE_DIR}/#{selected_file}"}
+              end
+
+    spec_helper_filename = generate_spec_helper WORKSPACE_DIR, selected_project
+
+    basedir = "#{WORKSPACE_DIR}/#{selected_project}"
+
+    rspec_params = "-r turnip/rspec -r acceptance_test/acceptance_config -I#{basedir} -I#{File.dirname(spec_helper_filename)}"
+
+    executor = ScriptExecutor.new
+
+    #session[:buffer] = executor.command.storage
+
+    executor.execute script: "rspec #{rspec_params} #{scripts.join(' ')}",
+                     capture_output: true, suppress_output: true
+  end
 end

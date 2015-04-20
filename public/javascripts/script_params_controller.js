@@ -115,7 +115,13 @@
   };
 
   ScriptParamsController.prototype.run_script2 = function() {
-    this.streamService.stream(this.settings.baseUrl, this);
+    var paramsNames = [
+      'selected_project', 'webapp_url', 'timeout_in_seconds', 'browser', 'driver', 'selected_files'
+    ];
+
+    var params = buildParamsQuery(this.scope.script_params, paramsNames);
+
+    this.streamService.stream(this.settings.baseUrl, params, this);
   };
 
 })();

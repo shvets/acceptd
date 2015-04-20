@@ -7,7 +7,7 @@
     var self = this;
 
     return {
-      stream: function(baseUrl, parent) {
+      stream: function(baseUrl, params, parent) {
 
         parent.progressbar.start();
 
@@ -24,8 +24,8 @@
           parent.progressbar.error();
         };
 
-        var url1 = baseUrl + "/stream_init";
-        var url2 = baseUrl + "/stream_next";
+        var url1 = baseUrl + "/stream_init?" + params;
+        var url2 = baseUrl + "/stream_next?" + params;
 
         var promise = $http.get(url1).success(successHandler).error(errorHandler);
 
