@@ -3,8 +3,7 @@
 
   var namespace = angular.module("app");
 
-  namespace.factory('StreamService', function($http) {
-    var self = this;
+  namespace.factory('StreamService', function($http, $interval) {
 
     return {
       stream: function(baseUrl, params, parent) {
@@ -34,7 +33,7 @@
         }
 
         promise.then(function() {
-          parent.interval(callAtInterval, 2000);
+          $interval(callAtInterval, 2000);
         });
       }
     };

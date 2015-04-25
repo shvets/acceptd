@@ -5,19 +5,18 @@
 
   namespace.controller("ScriptParamsController", ScriptParamsController);
 
-  function ScriptParamsController($scope, $http, Settings, $timeout, $interval, StreamService, $q, Progressbar) {
+  function ScriptParamsController($scope, $http, $q, $interval, Settings, StreamService, Progressbar) {
     this.scope = $scope;
     this.http = $http;
-    this.settings = Settings;
-    this.timeout = $timeout;
-    this.interval = $interval;
-    this.streamService = StreamService;
     this.q = $q;
+
+    this.settings = Settings;
+    this.streamService = StreamService;
 
     this.scope.script_params = {};
     this.scope.result = "";
 
-    this.progressbar = new Progressbar(this);
+    this.progressbar = new Progressbar(this, $interval);
 
     this.scope.progressbar = this.progressbar.control;
 
@@ -87,7 +86,8 @@
 
     var url = this.settings.baseUrl + "/run?" + buildParamsQuery(this.scope.script_params, paramsNames);
 
-    self.progressbar.start();
+    this.scope.result = "";
+    this.progressbar.start();
 
     var addResultHandler = function(result) {
       self.scope.result += result.result;
@@ -118,13 +118,15 @@
       promises.push(this.http.get(currentUrl).success(addResultHandler).error(errorHandler));
     }
 
-    this.q.all(promises).then(completeHandler);
+    this.q.all(promises).finally(completeHandler);
   };
 
   ScriptParamsController.prototype.run_script2 = function() {
     var paramsNames = [
       'selected_project', 'webapp_url', 'timeout_in_seconds', 'browser', 'driver', 'selected_files'
     ];
+
+    this.scope.result = "";
 
     var params = buildParamsQuery(this.scope.script_params, paramsNames);
 

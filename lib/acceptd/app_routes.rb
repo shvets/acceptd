@@ -41,9 +41,9 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
     session[:position] = 0
     session[:max] = 10
 
-    result = execute_scripts params
+    # result = execute_scripts params
 
-    p result
+    # p result
 
     {done: session[:position] == session[:max], result: ""}.to_json
   end

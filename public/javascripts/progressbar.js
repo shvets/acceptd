@@ -5,8 +5,10 @@
 
   namespace.value("Progressbar", Progressbar);
 
-  function Progressbar(parent) {
+  function Progressbar(parent, $interval) {
     this.parent = parent;
+
+    this.interval = $interval;
 
     this.control = {};
 
@@ -20,21 +22,22 @@
     this.control.value = 0;
     this.control.status = 'new';
 
-    this.ticker = this.parent.interval(function () {
+    this.ticker = this.interval(function () {
       self.increment();
     }, 2000);
 
     this.parent.scope.$on('$destroy', function() {
-      self.parent.interval.cancel(self.ticker);
+      self.interval.cancel(self.ticker);
       //self.ticker = null;
     });
   };
 
   Progressbar.prototype.stop = function() {
-    this.control.value = 100;
     this.control.status = 'success';
+    this.control.value = 100;
 
-    this.parent.interval.cancel(this.ticker);
+    this.interval.cancel(this.ticker);
+    this.ticker = null;
   };
 
   Progressbar.prototype.increment = function() {
