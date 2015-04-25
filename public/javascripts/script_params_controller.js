@@ -103,7 +103,14 @@
 
     var promises = [];
 
-    var selectedFiles = this.scope.script_params.selected_files.split(",");
+    var selectedFiles = this.scope.script_params.selected_files;
+
+    if(selectedFiles.indexOf(",") == -1) {
+      selectedFiles = [selectedFiles];
+    }
+    else {
+      selectedFiles = selectedFiles.split(",");
+    }
 
     for(var i=0; i < selectedFiles.length; i++) {
       var currentUrl = url + "&selected_file=" + selectedFiles[i];

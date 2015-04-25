@@ -119,26 +119,23 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
     files
   end
 
-  def generate_spec_helper workspace_dir, selected_project
+  def generate_spec_helper workspace_dir, params
+    binding.local_variable_set(:workspace_dir, workspace_dir)
+
+    driver = params['driver']
+    browser = params['browser']
+    timeout_in_seconds = params['timeout_in_seconds']
+    selected_project = params['selected_project']
+
+    template = ERB.new(File.read('lib/acceptd/spec_helper.rb.erb'))
+
     tmp_dir = "tmp/#{selected_project}"
     spec_helper_filename = "#{tmp_dir}/spec_helper.rb"
 
     FileUtils.makedirs(tmp_dir)
 
     File.open(spec_helper_filename, "w") do |file|
-      file.write <<-GROCERY_LIST
-require 'acceptance_test/acceptance_config'
-
-ENV['CONFIG_DIR'] = "#{workspace_dir}/#{selected_project}"
-ENV['DATA_DIR'] = "#{workspace_dir}/#{selected_project}/acceptance_data"
-
-AcceptanceConfig.instance.configure "#{workspace_dir}", app_name: "#{selected_project}",
-                                    enable_external_source: true,
-                                    ignore_case_in_steps: true
-RSpec.configure do |c|
-  c.add_formatter 'documentation'
-end
-      GROCERY_LIST
+      file.write template.result(binding)
     end
 
     spec_helper_filename
@@ -152,18 +149,19 @@ end
     selected_project = params['selected_project']
     selected_file = params['selected_file']
 
-    scripts = if selected_file
-                ["#{WORKSPACE_DIR}/#{selected_file}"]
-              else
-                selected_files = params['selected_files'].split(",")
-                selected_files.collect {|selected_file| "#{WORKSPACE_DIR}/#{selected_file}"}
-              end
+    scripts =
+      if selected_file
+        ["#{WORKSPACE_DIR}/#{selected_file}"]
+      else
+        selected_files = params['selected_files'].split(",")
+        selected_files.collect {|file| "#{WORKSPACE_DIR}/#{file}"}
+      end
 
-    spec_helper_filename = generate_spec_helper WORKSPACE_DIR, selected_project
+    spec_helper_filename = generate_spec_helper WORKSPACE_DIR, params
 
     basedir = "#{WORKSPACE_DIR}/#{selected_project}"
 
-    rspec_params = "-r turnip/rspec -r acceptance_test/acceptance_config -I#{basedir} -I#{File.dirname(spec_helper_filename)}"
+    rspec_params = "-r turnip/rspec -I#{basedir} -I#{File.dirname(spec_helper_filename)}"
 
     executor = ScriptExecutor.new
 
