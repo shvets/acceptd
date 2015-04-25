@@ -8,8 +8,6 @@
     return {
       stream: function(baseUrl, params, parent) {
 
-        parent.progressbar.start();
-
         var successHandler = function(result) {
           if(result.done) {
             parent.progressbar.stop();
@@ -26,15 +24,13 @@
         var url1 = baseUrl + "/stream_init?" + params;
         var url2 = baseUrl + "/stream_next?" + params;
 
-        var promise = $http.get(url1).success(successHandler).error(errorHandler);
-
         function callAtInterval() {
           $http.get(url2).success(successHandler).error(errorHandler);
         }
 
-        promise.then(function() {
-          $interval(callAtInterval, 2000);
-        });
+        parent.progressbar.start(callAtInterval);
+
+        $http.get(url1).success(successHandler).error(errorHandler);
       }
     };
   });

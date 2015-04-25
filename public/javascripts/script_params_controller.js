@@ -87,7 +87,6 @@
     var url = this.settings.baseUrl + "/run?" + buildParamsQuery(this.scope.script_params, paramsNames);
 
     this.scope.result = "";
-    this.progressbar.start();
 
     var addResultHandler = function(result) {
       self.scope.result += result.result;
@@ -117,6 +116,8 @@
 
       promises.push(this.http.get(currentUrl).success(addResultHandler).error(errorHandler));
     }
+
+    this.progressbar.start();
 
     this.q.all(promises).finally(completeHandler);
   };

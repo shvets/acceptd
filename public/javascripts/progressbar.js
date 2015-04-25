@@ -16,20 +16,21 @@
     this.control.status = 'new';
   }
 
-  Progressbar.prototype.start = function() {
+  Progressbar.prototype.start = function(callbackFunction) {
     var self = this;
 
     this.control.value = 0;
     this.control.status = 'new';
 
     this.ticker = this.interval(function () {
+      callbackFunction.call();
       self.increment();
     }, 2000);
 
-    this.parent.scope.$on('$destroy', function() {
-      self.interval.cancel(self.ticker);
-      //self.ticker = null;
-    });
+    //this.parent.scope.$on('$destroy', function() {
+    //  self.interval.cancel(self.ticker);
+    //  //self.ticker = null;
+    //});
   };
 
   Progressbar.prototype.stop = function() {
