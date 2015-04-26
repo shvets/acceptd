@@ -4,6 +4,7 @@ require 'yaml'
 require 'active_support/core_ext/hash'
 require 'script_executor'
 require 'rspec'
+require 'erb'
 
 class Acceptd::AppRoutes < Acceptd::RoutesBase
   ACCEPTD_CONFIG_FILE_NAME = ".acceptd.yaml"

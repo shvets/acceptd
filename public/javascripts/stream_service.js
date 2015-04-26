@@ -3,22 +3,27 @@
 
   var namespace = angular.module("app");
 
-  namespace.factory('StreamService', function($http, $interval) {
-
+  namespace.factory('StreamService', function($http, Progressbar) {
     return {
-      stream: function(baseUrl, params, parent) {
+      progressbar: function() {
+        return Progressbar;
+      },
+
+      stream: function(baseUrl, params, updateFunction) {
 
         var successHandler = function(result) {
           if(result.done) {
-            parent.progressbar.stop();
+            Progressbar.stop();
           }
           else {
-            parent.scope.result += result.result;
+            if(updateFunction) {
+              updateFunction(result.result);
+            }
           }
         };
 
         var errorHandler = function() {
-          parent.progressbar.error();
+          Progressbar.error();
         };
 
         var url1 = baseUrl + "/stream_init?" + params;
@@ -28,7 +33,7 @@
           $http.get(url2).success(successHandler).error(errorHandler);
         }
 
-        parent.progressbar.start(callAtInterval);
+        Progressbar.start(callAtInterval);
 
         $http.get(url1).success(successHandler).error(errorHandler);
       }

@@ -5,7 +5,7 @@
 
   namespace.controller("ScriptParamsController", ScriptParamsController);
 
-  function ScriptParamsController($scope, $http, $q, $interval, Settings, StreamService, Progressbar) {
+  function ScriptParamsController($scope, $http, $q, Settings, StreamService) {
     this.scope = $scope;
     this.http = $http;
     this.q = $q;
@@ -84,6 +84,9 @@
       'selected_project', 'webapp_url', 'timeout_in_seconds', 'browser', 'driver', 'selected_files'
     ];
 
+    this.progressbar = this.streamService.progressbar();
+    this.scope.progressbar = this.progressbar.control();
+
     var url = this.settings.baseUrl + "/run?" + buildParamsQuery(this.scope.script_params, paramsNames);
 
     this.scope.result = "";
@@ -131,7 +134,20 @@
 
     var params = buildParamsQuery(this.scope.script_params, paramsNames);
 
-    this.streamService.stream(this.settings.baseUrl, params, this);
+    this.progressbar = this.streamService.progressbar();
+    this.scope.progressbar = this.progressbar.control();
+
+    var updateFunction = function(result) {
+      this.scope.result += result;
+    };
+
+    this.streamService.stream(this.settings.baseUrl, params, updateFunction);
+  };
+
+  ScriptParamsController.prototype.cancel_run = function() {
+    if(this.progressbar && this.progressbar.status() == 'started') {
+      this.progressbar.stop();
+    }
   };
 
 })();

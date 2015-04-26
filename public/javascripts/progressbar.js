@@ -3,55 +3,56 @@
 
   var namespace = angular.module("app");
 
-  namespace.value("Progressbar", Progressbar);
+  namespace.factory('Progressbar', function($interval) {
+    var control = {};
 
-  function Progressbar(parent, $interval) {
-    this.parent = parent;
+    control.value = 0;
+    control.status = 'new';
 
-    this.interval = $interval;
+    var ticker = null;
 
-    this.control = {};
+    var increment = function() {
+      control.value = control.value + 10;
 
-    this.control.value = 0;
-    this.control.status = 'new';
-  }
+      if(control.value == 100) {
+        control.value = 0;
+      }
+    };
 
-  Progressbar.prototype.start = function(callbackFunction) {
-    var self = this;
+    return {
+      control: function() {
+        return control;
+      },
 
-    this.control.value = 0;
-    this.control.status = 'new';
+      start: function(callbackFunction) {
+        control.value = 0;
+        control.status = 'started';
 
-    this.ticker = this.interval(function () {
-      callbackFunction.call();
-      self.increment();
-    }, 2000);
+        ticker = $interval(function () {
+          increment();
 
-    //this.parent.scope.$on('$destroy', function() {
-    //  self.interval.cancel(self.ticker);
-    //  //self.ticker = null;
-    //});
-  };
+          if(callbackFunction) {
+            callbackFunction();
+          }
+        }, 2000);
+      },
 
-  Progressbar.prototype.stop = function() {
-    this.control.status = 'success';
-    this.control.value = 100;
+      stop: function() {
+        control.status = 'success';
+        control.value = 100;
 
-    this.interval.cancel(this.ticker);
-    this.ticker = null;
-  };
+        $interval.cancel(ticker);
+        ticker = null;
+      },
 
-  Progressbar.prototype.increment = function() {
-    this.control.value = this.control.value+10;
+      error: function() {
+        control.status = 'error';
+      },
 
-    if(this.control.value == 100) {
-      this.control.value = 0;
-    }
-  };
-
-  Progressbar.prototype.error = function() {
-    this.control.status = 'error';
-  };
+      status: function() {
+        return control.status;
+      }
+    };
+  });
 
 })();
-
