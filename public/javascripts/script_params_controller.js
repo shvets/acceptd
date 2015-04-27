@@ -16,10 +16,6 @@
     this.scope.script_params = {};
     this.scope.result = "";
 
-    this.progressbar = new Progressbar(this, $interval);
-
-    this.scope.progressbar = this.progressbar.control;
-
     var self = this;
 
     $scope.$watch('$viewContentLoaded', function() {
@@ -137,8 +133,10 @@
     this.progressbar = this.streamService.progressbar();
     this.scope.progressbar = this.progressbar.control();
 
+    var self = this;
+
     var updateFunction = function(result) {
-      this.scope.result += result;
+      self.scope.result += result;
     };
 
     this.streamService.stream(this.settings.baseUrl, params, updateFunction);

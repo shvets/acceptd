@@ -166,9 +166,23 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
 
     executor = ScriptExecutor.new
 
-    #session[:buffer] = executor.command.storage
+    output_stream = StringIO.new
 
-    executor.execute script: "rspec #{rspec_params} #{scripts.join(' ')}",
-                     capture_output: true, suppress_output: true
+    thread1 = Thread.new do
+      executor.execute script: "rspec #{rspec_params} #{scripts.join(' ')}", output_stream: output_stream
+    end
+
+    thread2 = Thread.new do
+      sleep 1
+      output_stream.flush
+      p output_stream.string
+    end
+
+    thread1.join
+    thread2.join
+
+    output_stream.close
+
+    output_stream.string
   end
 end
