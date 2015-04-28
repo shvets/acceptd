@@ -143,20 +143,31 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
   end
 
   def execute_scripts params
+    selected_script_index = params['selected_script_index']
+    selected_files = params['selected_files'].split(",")
+
+    scripts = selected_files.collect {|file| "#{WORKSPACE_DIR}/#{file}"}
+
+    if selected_script_index
+      execute_script scripts[selected_script_index], params
+    else
+      result = ""
+
+      scripts.each do |script|
+        result += execute_script(script, params)
+        result += "\n"
+      end
+
+      result
+    end
+  end
+
+  def execute_script script, params
     ENV['DRIVER'] = params['driver']
     ENV['BROWSER'] = params['browser']
     ENV['TIMEOUT'] = params['timeout_in_seconds']
 
     selected_project = params['selected_project']
-    selected_file = params['selected_file']
-
-    scripts =
-      if selected_file
-        ["#{WORKSPACE_DIR}/#{selected_file}"]
-      else
-        selected_files = params['selected_files'].split(",")
-        selected_files.collect {|file| "#{WORKSPACE_DIR}/#{file}"}
-      end
 
     spec_helper_filename = generate_spec_helper WORKSPACE_DIR, params
 
@@ -168,20 +179,11 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
 
     output_stream = StringIO.new
 
-    thread1 = Thread.new do
-      executor.execute script: "rspec #{rspec_params} #{scripts.join(' ')}", output_stream: output_stream
+    begin
+      executor.execute script: "rspec #{rspec_params} #{script}", output_stream: output_stream
+    ensure
+      output_stream.close
     end
-
-    thread2 = Thread.new do
-      sleep 1
-      output_stream.flush
-      p output_stream.string
-    end
-
-    thread1.join
-    thread2.join
-
-    output_stream.close
 
     output_stream.string
   end

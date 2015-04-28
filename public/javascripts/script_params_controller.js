@@ -80,48 +80,41 @@
       'selected_project', 'webapp_url', 'timeout_in_seconds', 'browser', 'driver', 'selected_files'
     ];
 
+    this.scope.result = "";
+
+    var params = buildParamsQuery(this.scope.script_params, paramsNames);
+
     this.progressbar = this.streamService.progressbar();
     this.scope.progressbar = this.progressbar.control();
 
-    var url = this.settings.baseUrl + "/run?" + buildParamsQuery(this.scope.script_params, paramsNames);
+    //var url = this.settings.baseUrl + "/run?" + buildParamsQuery(this.scope.script_params, paramsNames);
 
-    this.scope.result = "";
+    //var addResultHandler = function(result) {
+    //  self.scope.result += result.result;
+    //};
+    //
+    //var errorHandler = function() {
+    //  self.progressbar.error();
+    //};
+    //
+    //var completeHandler = function() {
+    //  self.progressbar.stop();
+    //};
 
-    var addResultHandler = function(result) {
-      self.scope.result += result.result;
+    //this.progressbar.start();
+    //
+    //this.http.get(url).success(addResultHandler).error(errorHandler).finally(completeHandler);
+
+    var updateFunction = function(result) {
+      self.scope.result += result;
     };
 
-    var errorHandler = function() {
-      self.progressbar.error();
-    };
-
-    var completeHandler = function() {
-      self.progressbar.stop();
-    };
-
-    var promises = [];
-
-    var selectedFiles = this.scope.script_params.selected_files;
-
-    if(selectedFiles.indexOf(",") == -1) {
-      selectedFiles = [selectedFiles];
-    }
-    else {
-      selectedFiles = selectedFiles.split(",");
-    }
-
-    for(var i=0; i < selectedFiles.length; i++) {
-      var currentUrl = url + "&selected_file=" + selectedFiles[i];
-
-      promises.push(this.http.get(currentUrl).success(addResultHandler).error(errorHandler));
-    }
-
-    this.progressbar.start();
-
-    this.q.all(promises).finally(completeHandler);
+    this.streamService.stream2(this.settings.baseUrl, params, updateFunction);
   };
 
   ScriptParamsController.prototype.run_script2 = function() {
+    var self = this;
+
     var paramsNames = [
       'selected_project', 'webapp_url', 'timeout_in_seconds', 'browser', 'driver', 'selected_files'
     ];
@@ -132,8 +125,6 @@
 
     this.progressbar = this.streamService.progressbar();
     this.scope.progressbar = this.progressbar.control();
-
-    var self = this;
 
     var updateFunction = function(result) {
       self.scope.result += result;
