@@ -143,23 +143,18 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
   end
 
   def execute_scripts params
-    selected_script_index = params['selected_script_index']
     selected_files = params['selected_files'].split(",")
 
     scripts = selected_files.collect {|file| "#{WORKSPACE_DIR}/#{file}"}
 
-    if selected_script_index
-      execute_script scripts[selected_script_index], params
-    else
-      result = ""
+    result = ""
 
-      scripts.each do |script|
-        result += execute_script(script, params)
-        result += "\n"
-      end
-
-      result
+    scripts.each do |script|
+      result += execute_script(script, params)
+      result += "\n"
     end
+
+    result
   end
 
   def execute_script script, params

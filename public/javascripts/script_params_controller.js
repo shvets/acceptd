@@ -80,36 +80,51 @@
       'selected_project', 'webapp_url', 'timeout_in_seconds', 'browser', 'driver', 'selected_files'
     ];
 
-    this.scope.result = "";
-
-    var params = buildParamsQuery(this.scope.script_params, paramsNames);
-
     this.progressbar = this.streamService.progressbar();
     this.scope.progressbar = this.progressbar.control();
 
-    //var url = this.settings.baseUrl + "/run?" + buildParamsQuery(this.scope.script_params, paramsNames);
+    var url = this.settings.baseUrl + "/run?" + buildParamsQuery(this.scope.script_params, paramsNames);
 
-    //var addResultHandler = function(result) {
-    //  self.scope.result += result.result;
-    //};
-    //
-    //var errorHandler = function() {
-    //  self.progressbar.error();
-    //};
-    //
-    //var completeHandler = function() {
-    //  self.progressbar.stop();
-    //};
+    this.scope.result = "";
 
-    //this.progressbar.start();
-    //
-    //this.http.get(url).success(addResultHandler).error(errorHandler).finally(completeHandler);
-
-    var updateFunction = function(result) {
-      self.scope.result += result;
+    var addResultHandler = function(result) {
+      self.scope.result += result.data.result;
     };
 
-    this.streamService.stream2(this.settings.baseUrl, params, updateFunction);
+    var errorHandler = function() {
+      self.progressbar.error();
+    };
+
+    var completeHandler = function() {
+      self.progressbar.stop();
+    };
+
+    var selectedFiles = this.scope.script_params.selected_files;
+
+    if(selectedFiles.indexOf(",") == -1) {
+      selectedFiles = [selectedFiles];
+    }
+    else {
+      selectedFiles = selectedFiles.split(",");
+    }
+
+    this.progressbar.start();
+
+    var chain = this.q.when();
+
+    selectedFiles.forEach(function (selectedFile) {
+      var currentUrl = url + "&selected_files=" + selectedFile;
+
+      var handler = function(url) {
+        return function() {
+          return self.http.get(url).then(addResultHandler, errorHandler);
+        };
+      };
+
+      chain = chain.then(handler(currentUrl));
+    });
+
+    chain.then(completeHandler);
   };
 
   ScriptParamsController.prototype.run_script2 = function() {
