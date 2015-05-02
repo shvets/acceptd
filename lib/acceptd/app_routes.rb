@@ -32,31 +32,19 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
     erb :index
   end
 
+  get '/reset_session' do
+    Capybara.reset_sessions!
+    #Capybara.current_session.driver.reset!
+  end
+
   get '/run' do
     result = execute_scripts params
 
     {result: result}.to_json
   end
 
-  get '/stream_init' do
-    session[:position] = 0
-    session[:max] = 10
-
-    # result = execute_scripts params
-
-    # p result
-
-    {done: session[:position] == session[:max], result: ""}.to_json
-  end
-
-  get '/stream_next' do
-    session[:position] += 1
-
-    # sleep 1
-
-    p session[:buffer]
-
-    {done: session[:position] == session[:max], result: "abc"}.to_json
+  get '/run_as_stream' do
+    execute_scripts_as_stream params
   end
 
   helpers do
@@ -143,21 +131,6 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
   end
 
   def execute_scripts params
-    selected_files = params['selected_files'].split(",")
-
-    scripts = selected_files.collect {|file| "#{WORKSPACE_DIR}/#{file}"}
-
-    result = ""
-
-    scripts.each do |script|
-      result += execute_script(script, params)
-      result += "\n"
-    end
-
-    result
-  end
-
-  def execute_script script, params
     ENV['DRIVER'] = params['driver']
     ENV['BROWSER'] = params['browser']
     ENV['TIMEOUT'] = params['timeout_in_seconds']
@@ -170,16 +143,113 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
 
     rspec_params = "-r turnip/rspec -I#{basedir} -I#{File.dirname(spec_helper_filename)}"
 
+    selected_files = params['selected_files'].split(",")
+
+    scripts = selected_files.collect {|file| "#{WORKSPACE_DIR}/#{file}"}
+
+    result = ""
+
+    scripts.each do |script|
+      result += run_rspec rspec_params, script
+
+      result += "\n"
+    end
+
+    result
+  end
+
+  def execute_scripts_as_stream params
+    ENV['DRIVER'] = params['driver']
+    ENV['BROWSER'] = params['browser']
+    ENV['TIMEOUT'] = params['timeout_in_seconds']
+
+    selected_project = params['selected_project']
+
+    spec_helper_filename = generate_spec_helper WORKSPACE_DIR, params
+
+    basedir = "#{WORKSPACE_DIR}/#{selected_project}"
+
+    rspec_params = "-r turnip/rspec -I#{basedir} -I#{File.dirname(spec_helper_filename)}"
+
+    selected_files = params['selected_files'].split(",")
+
+    scripts = selected_files.collect {|file| "#{WORKSPACE_DIR}/#{file}"}
+
     executor = ScriptExecutor.new
 
+    stream do |out|
+      scripts.each do |script|
+        def out.write s
+          self << s
+        end
+
+        def out.flush
+        end
+
+        executor.execute script: "rspec #{rspec_params} #{script}", output_stream: out
+      end
+    end
+  end
+
+  def run_rspec rspec_params, script
     output_stream = StringIO.new
 
+    # create_rspec_reporter output_stream
+
+    RSpec.configure do |config|
+      config.add_formatter 'documentation'
+    end
+
+    executor = ScriptExecutor.new
+
     begin
-      executor.execute script: "rspec #{rspec_params} #{script}", output_stream: output_stream
+        executor.execute script: "rspec #{rspec_params} #{script}", output_stream: output_stream
     ensure
       output_stream.close
     end
 
     output_stream.string
   end
+
+  def run_rspec2 rspec_params, script
+    output_stream = StringIO.new
+
+    require 'rspec'
+    require 'capybara'
+    require 'rspec/core'
+
+    argv = rspec_params.split(" ")
+    argv << script
+
+    create_rspec_reporter output_stream
+
+    #RSpec::Core::Runner.disable_autorun!
+
+    begin
+      status = RSpec::Core::Runner.run(argv, output_stream, output_stream).to_i
+
+      p "status: #{status}"
+    rescue Exception => e
+        p e
+    ensure
+      output_stream.close
+    end
+
+    output_stream.string
+  end
+
+  def create_rspec_reporter output_stream
+    config = RSpec.configuration
+
+    formatter = RSpec::Core::Formatters::DocumentationFormatter.new(output_stream)
+
+    reporter = RSpec::Core::Reporter.new(config)
+    config.instance_variable_set(:@reporter, reporter)
+
+    loader = config.send(:formatter_loader)
+    notifications = loader.send(:notifications_for, RSpec::Core::Formatters::DocumentationFormatter)
+
+    reporter.register_listener(formatter, *notifications)
+  end
+
 end

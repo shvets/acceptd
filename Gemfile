@@ -17,6 +17,7 @@ group :default do
 
   gem "acceptance_test"
   gem "script_executor"
+  gem "sinatra-contrib"
 
   gem "better_errors"
   gem "binding_of_caller"

@@ -130,22 +130,30 @@
 
         <section class="well">
           <div class="row">
-            <div class="col-lg-1">
+            <span class="col-lg-1">
               <button class="btn btn-info" ng-click="scriptParamsCtrl.save_config()">Save</button>
-            </div>
-            <div class="col-lg-1">
+            </span>
+            <span class="col-lg-1">
               <button class="btn btn-info" ng-click="scriptParamsCtrl.load_config()">Load</button>
-            </div>
-            <div class="col-lg-1">
+            </span>
+            <span class="col-lg-2">
               <button class="btn btn-primary" ng-click="scriptParamsCtrl.run_script()">Run</button>
-            </div>
-            <div class="col-lg-1">
-              <button class="btn btn-primary" ng-click="scriptParamsCtrl.run_script2()">Run2</button>
-            </div>
-            <div class="col-lg-1">
+            </span>
+            <span class="col-lg-2">
+              <button class="btn btn-primary" ng-click="scriptParamsCtrl.run_script_as_stream()">Run as Stream</button>
+            </span>
+            <!--<div class="col-lg-1">-->
+              <!--<button class="btn btn-primary" ng-click="scriptParamsCtrl.run_script2()">Run2</button>-->
+            <!--</div>-->
+            <span class="col-lg-2">
               <button class="btn btn-primary" ng-click="scriptParamsCtrl.cancel_run()">Cancel</button>
-            </div>
+            </span>
+            <span class="col-lg-2">
+              <button class="btn btn-primary" ng-click="scriptParamsCtrl.reset_session()">Reset Session</button>
+            </span>
+          </div>
 
+          <div class="row">
             <div class="col-lg-9">
               <progressbar ng-hide="progressbar.value < 1" type="success" value="progressbar.value" max="100">
                 <i>{{progressbar.status == 'success' ? "Success!" : ""}}</i>

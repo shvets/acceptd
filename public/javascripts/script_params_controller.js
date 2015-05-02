@@ -73,6 +73,22 @@
     this.http.get(url).success(successHandler).error(errorHandler);
   };
 
+  ScriptParamsController.prototype.cancel_run = function() {
+    if(this.progressbar && this.progressbar.status() == 'started') {
+      this.progressbar.stop();
+    }
+  };
+
+  ScriptParamsController.prototype.reset_session = function() {
+    var url = this.settings.baseUrl + "/reset_session";
+
+    var successHandler = function(result) {};
+
+    var errorHandler = function(result) {};
+
+    this.http.get(url).success(successHandler).error(errorHandler);
+  };
+
   ScriptParamsController.prototype.run_script = function() {
     var self = this;
 
@@ -127,31 +143,58 @@
     chain.then(completeHandler);
   };
 
-  ScriptParamsController.prototype.run_script2 = function() {
+  ScriptParamsController.prototype.run_script_as_stream = function() {
     var self = this;
 
     var paramsNames = [
       'selected_project', 'webapp_url', 'timeout_in_seconds', 'browser', 'driver', 'selected_files'
     ];
 
-    this.scope.result = "";
-
-    var params = buildParamsQuery(this.scope.script_params, paramsNames);
-
     this.progressbar = this.streamService.progressbar();
     this.scope.progressbar = this.progressbar.control();
 
-    var updateFunction = function(result) {
-      self.scope.result += result;
+    var url = this.settings.baseUrl + "/run_as_stream?" + buildParamsQuery(this.scope.script_params, paramsNames);
+
+    this.scope.result = "";
+
+    var addResultHandler = function(result) {
+      self.scope.result += result.data;
     };
 
-    this.streamService.stream(this.settings.baseUrl, params, updateFunction);
-  };
+    var errorHandler = function() {
+      self.progressbar.error();
+    };
 
-  ScriptParamsController.prototype.cancel_run = function() {
-    if(this.progressbar && this.progressbar.status() == 'started') {
-      this.progressbar.stop();
+    var completeHandler = function() {
+      self.progressbar.stop();
+    };
+
+    var selectedFiles = this.scope.script_params.selected_files;
+
+    if(selectedFiles.indexOf(",") == -1) {
+      selectedFiles = [selectedFiles];
     }
+    else {
+      selectedFiles = selectedFiles.split(",");
+    }
+
+    this.progressbar.start();
+
+    var chain = this.q.when();
+
+    selectedFiles.forEach(function (selectedFile) {
+      var currentUrl = url + "&selected_files=" + selectedFile;
+
+      var handler = function(url) {
+        return function() {
+          return self.http.get(url).then(addResultHandler, errorHandler);
+        };
+      };
+
+      chain = chain.then(handler(currentUrl));
+    });
+
+    chain.then(completeHandler);
   };
 
 })();
