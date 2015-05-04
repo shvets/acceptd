@@ -4,6 +4,7 @@ require 'yaml'
 require 'active_support/core_ext/hash'
 require 'script_executor'
 require 'rspec'
+require 'capybara'
 require 'erb'
 
 class Acceptd::AppRoutes < Acceptd::RoutesBase
@@ -38,13 +39,7 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
   end
 
   get '/run' do
-    result = execute_scripts params
-
-    {result: result}.to_json
-  end
-
-  get '/run_as_stream' do
-    execute_scripts_as_stream params
+    execute_scripts params
   end
 
   helpers do
@@ -147,46 +142,9 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
 
     scripts = selected_files.collect {|file| "#{WORKSPACE_DIR}/#{file}"}
 
-    result = ""
-
-    scripts.each do |script|
-      result += run_rspec rspec_params, script
-
-      result += "\n"
-    end
-
-    result
-  end
-
-  def execute_scripts_as_stream params
-    ENV['DRIVER'] = params['driver']
-    ENV['BROWSER'] = params['browser']
-    ENV['TIMEOUT'] = params['timeout_in_seconds']
-
-    selected_project = params['selected_project']
-
-    spec_helper_filename = generate_spec_helper WORKSPACE_DIR, params
-
-    basedir = "#{WORKSPACE_DIR}/#{selected_project}"
-
-    rspec_params = "-r turnip/rspec -I#{basedir} -I#{File.dirname(spec_helper_filename)}"
-
-    selected_files = params['selected_files'].split(",")
-
-    scripts = selected_files.collect {|file| "#{WORKSPACE_DIR}/#{file}"}
-
-    executor = ScriptExecutor.new
-
     stream do |out|
       scripts.each do |script|
-        def out.write s
-          self << s
-        end
-
-        def out.flush
-        end
-
-        executor.execute script: "rspec #{rspec_params} #{script}", output_stream: out
+        out << run_rspec(rspec_params, script)
       end
     end
   end
@@ -194,16 +152,10 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
   def run_rspec rspec_params, script
     output_stream = StringIO.new
 
-    # create_rspec_reporter output_stream
-
-    RSpec.configure do |config|
-      config.add_formatter 'documentation'
-    end
-
     executor = ScriptExecutor.new
 
     begin
-        executor.execute script: "rspec #{rspec_params} #{script}", output_stream: output_stream
+      executor.execute script: "rspec #{rspec_params} #{script}", output_stream: output_stream
     ensure
       output_stream.close
     end
@@ -214,23 +166,15 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
   def run_rspec2 rspec_params, script
     output_stream = StringIO.new
 
-    require 'rspec'
-    require 'capybara'
-    require 'rspec/core'
-
     argv = rspec_params.split(" ")
     argv << script
 
     create_rspec_reporter output_stream
 
-    #RSpec::Core::Runner.disable_autorun!
+    RSpec::Core::Runner.disable_autorun!
 
     begin
-      status = RSpec::Core::Runner.run(argv, output_stream, output_stream).to_i
-
-      p "status: #{status}"
-    rescue Exception => e
-        p e
+      RSpec::Core::Runner.run(argv, output_stream, output_stream)
     ensure
       output_stream.close
     end
