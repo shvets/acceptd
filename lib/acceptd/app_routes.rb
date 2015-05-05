@@ -24,11 +24,11 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
   end
 
   get '/load_config' do
-    load_config(ACCEPTD_CONFIG_FILE_NAME).to_json
+    load_config(WORKSPACE_DIR, ACCEPTD_CONFIG_FILE_NAME).to_json
   end
 
   get '/save_config' do
-    save_config params, ACCEPTD_CONFIG_FILE_NAME
+    save_config WORKSPACE_DIR, ACCEPTD_CONFIG_FILE_NAME, params
 
     erb :index
   end
@@ -39,7 +39,13 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
   end
 
   get '/run' do
-    execute_scripts params
+    begin
+      execute_scripts params
+    rescue Exception => e
+      status 500
+
+      e.message
+    end
   end
 
   helpers do
@@ -50,13 +56,13 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
 
   private
 
-  def load_config file_name
+  def load_config workspace_dir, file_name
     config = {}
 
-    projects = projects(WORKSPACE_DIR)
+    projects = projects(workspace_dir)
 
-    if File.exist?(file_name)
-      config.merge!(YAML.load_file(file_name))
+    if File.exist?("#{workspace_dir}/#{file_name}")
+      config.merge!(YAML.load_file("#{workspace_dir}/#{file_name}"))
     else
       config['webapp_url'] = "http://localhost:4567"
 
@@ -68,15 +74,15 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
       config['selected_files'] = []
     end
 
-    config['workspace_dir'] = WORKSPACE_DIR
+    config['workspace_dir'] = workspace_dir
     config['projects'] = projects
-    config['files'] = feature_files(WORKSPACE_DIR, config['selected_project'])
+    config['files'] = feature_files(workspace_dir, config['selected_project'])
 
     config
   end
 
-  def save_config config, file_name
-    File.open(file_name, 'w') {|file| file.write config.to_yaml }
+  def save_config workspace_dir, file_name, config
+    File.open("#{workspace_dir}/#{file_name}", 'w') {|file| file.write config.to_yaml }
   end
 
   def projects workspace_dir
@@ -126,31 +132,37 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
   end
 
   def execute_scripts params
-    ENV['DRIVER'] = params['driver']
-    ENV['BROWSER'] = params['browser']
-    ENV['TIMEOUT'] = params['timeout_in_seconds']
-
+    workspace_dir = WORKSPACE_DIR
     selected_project = params['selected_project']
-
-    spec_helper_filename = generate_spec_helper WORKSPACE_DIR, params
-
-    basedir = "#{WORKSPACE_DIR}/#{selected_project}"
-
-    rspec_params = "-r turnip/rspec -I#{basedir} -I#{File.dirname(spec_helper_filename)}"
-
     selected_files = params['selected_files'].split(",")
 
-    scripts = selected_files.collect {|file| "#{WORKSPACE_DIR}/#{file}"}
+    spec_helper_filename = generate_spec_helper workspace_dir, params
+
+    basedir = "#{workspace_dir}/#{selected_project}"
 
     stream do |out|
+      scripts = selected_files.collect {|file| "#{workspace_dir}/#{file}"}
+
       scripts.each do |script|
-        out << run_rspec(rspec_params, script)
+        rspec_params = "-r turnip/rspec -I#{basedir} "
+        rspec_params += "-I#{File.dirname(spec_helper_filename)} "
+        rspec_params += "--format RSpec::Core::Formatters::DocumentationFormatter"
+
+        out << run_rspec(params, rspec_params, script)
+
+        RSpec.clear_examples
       end
     end
   end
 
-  def run_rspec rspec_params, script
+  def run_rspec params, rspec_params, script
+    ENV['DRIVER'] = params['driver']
+    ENV['BROWSER'] = params['browser']
+    ENV['TIMEOUT'] = params['timeout_in_seconds']
+
     output_stream = StringIO.new
+
+    #create_rspec_reporter output_stream
 
     executor = ScriptExecutor.new
 
@@ -163,15 +175,19 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
     output_stream.string
   end
 
-  def run_rspec2 rspec_params, script
+  def run_rspec2 params, rspec_params, script
+    ENV['DRIVER'] = params['driver']
+    ENV['BROWSER'] = params['browser']
+    ENV['TIMEOUT'] = params['timeout_in_seconds']
+
     output_stream = StringIO.new
+
+    # create_rspec_reporter output_stream
+
+    RSpec::Core::Runner.disable_autorun!
 
     argv = rspec_params.split(" ")
     argv << script
-
-    create_rspec_reporter output_stream
-
-    RSpec::Core::Runner.disable_autorun!
 
     begin
       RSpec::Core::Runner.run(argv, output_stream, output_stream)

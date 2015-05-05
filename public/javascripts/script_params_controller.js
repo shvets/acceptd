@@ -107,7 +107,9 @@
       self.scope.result += result.data;
     };
 
-    var errorHandler = function() {
+    var errorHandler = function(result) {
+      self.scope.result += result.data;
+
       self.progressbar.error();
     };
 

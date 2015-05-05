@@ -150,7 +150,8 @@
           <div class="row">
             <div class="col-lg-9">
               <progressbar ng-hide="progressbar.value < 1" type="success" value="progressbar.value" max="100">
-                <i>{{progressbar.status == 'success' ? "Success!" : ""}}</i>
+                <i ng-if="progressbar.status == 'completed'">Success!</i>
+                <i ng-if="progressbar.status == 'error'" style="color: red">Failed!</i>
               </progressbar>
             </div>
           </div>

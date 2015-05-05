@@ -38,7 +38,9 @@
       },
 
       stop: function() {
-        control.status = 'success';
+        if(control.status == 'started') {
+          control.status = 'completed';
+        }
         control.value = 100;
 
         $interval.cancel(ticker);
