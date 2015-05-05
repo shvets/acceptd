@@ -110,22 +110,24 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
   end
 
   def generate_spec_helper workspace_dir, params
-    binding.local_variable_set(:workspace_dir, workspace_dir)
-
-    driver = params['driver']
-    browser = params['browser']
-    timeout_in_seconds = params['timeout_in_seconds']
-    selected_project = params['selected_project']
-
     template = ERB.new(File.read('lib/acceptd/spec_helper.rb.erb'))
 
-    tmp_dir = "tmp/#{selected_project}"
-    spec_helper_filename = "#{tmp_dir}/spec_helper.rb"
+    spec_helper_filename = "tmp/#{params['selected_project']}/spec_helper.rb"
 
-    FileUtils.makedirs(tmp_dir)
+    FileUtils.makedirs(File.dirname(spec_helper_filename))
 
     File.open(spec_helper_filename, "w") do |file|
-      file.write template.result(binding)
+      namespace = OpenStruct.new(
+          workspace_dir: workspace_dir,
+          driver: params['driver'],
+          browser: params['browser'],
+          timeout_in_seconds: params['timeout_in_seconds'],
+          selected_project: params['selected_project']
+      )
+
+      template_binding = namespace.instance_eval { binding }
+
+      file.write template.result(template_binding)
     end
 
     spec_helper_filename
@@ -162,8 +164,6 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
 
     output_stream = StringIO.new
 
-    #create_rspec_reporter output_stream
-
     executor = ScriptExecutor.new
 
     begin
@@ -182,8 +182,6 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
 
     output_stream = StringIO.new
 
-    # create_rspec_reporter output_stream
-
     RSpec::Core::Runner.disable_autorun!
 
     argv = rspec_params.split(" ")
@@ -198,18 +196,18 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
     output_stream.string
   end
 
-  def create_rspec_reporter output_stream
-    config = RSpec.configuration
-
-    formatter = RSpec::Core::Formatters::DocumentationFormatter.new(output_stream)
-
-    reporter = RSpec::Core::Reporter.new(config)
-    config.instance_variable_set(:@reporter, reporter)
-
-    loader = config.send(:formatter_loader)
-    notifications = loader.send(:notifications_for, RSpec::Core::Formatters::DocumentationFormatter)
-
-    reporter.register_listener(formatter, *notifications)
-  end
+  # def create_rspec_reporter output_stream
+  #   config = RSpec.configuration
+  #
+  #   formatter = RSpec::Core::Formatters::DocumentationFormatter.new(output_stream)
+  #
+  #   reporter = RSpec::Core::Reporter.new(config)
+  #   config.instance_variable_set(:@reporter, reporter)
+  #
+  #   loader = config.send(:formatter_loader)
+  #   notifications = loader.send(:notifications_for, RSpec::Core::Formatters::DocumentationFormatter)
+  #
+  #   reporter.register_listener(formatter, *notifications)
+  # end
 
 end
