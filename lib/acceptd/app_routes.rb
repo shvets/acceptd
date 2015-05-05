@@ -42,9 +42,11 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
     begin
       execute_scripts params
     rescue Exception => e
-      status 500
+      # status 500
+      #
+      # e.message
 
-      e.message
+      json_status 500, e.message
     end
   end
 
