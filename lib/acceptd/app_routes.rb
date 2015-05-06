@@ -191,6 +191,8 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
 
     begin
       RSpec::Core::Runner.run(argv, output_stream, output_stream)
+    rescue Exception => e
+        p e
     ensure
       output_stream.close
     end

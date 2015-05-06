@@ -22,19 +22,20 @@ AcceptanceTest.instance.configure({
   timeout_in_seconds: timeout_in_seconds
 })
 
-# require 'capybara'
-#
-# Capybara::Selenium::Driver.class_eval do
-#   def reset!
-#   end
-# end
+RSpec.configure do |config|
+  config.before(:each) do
+    local_browser = config.instance_variable_get(:@local_browser)
 
-# RSpec.configure do |config|
-#   config.after(:type => :feature) do
-#     #Capybara.current_session.driver.reset!
-#     # Capybara.current_session.driver.browser.quit
-#   end
-# end
+    config.instance_variable_set(:@local_browser, Capybara.current_session.driver.browser) unless local_browser
+  end
 
+  config.after(:suite) do
+    local_browser = config.instance_variable_get(:@local_browser)
 
+    if local_browser
+      local_browser.quit
 
+      config.instance_variable_set(:@local_browser, nil)
+    end
+  end
+end
