@@ -3,9 +3,9 @@
 
   var namespace = angular.module("app");
 
-  namespace.controller("ScriptParamsController", ScriptParamsController);
+  namespace.controller("AcceptdController", AcceptdController);
 
-  function ScriptParamsController($scope, $http, $q, Settings, StreamService) {
+  function AcceptdController($scope, $http, $q, Settings, StreamService) {
     this.scope = $scope;
     this.http = $http;
     this.q = $q;
@@ -42,13 +42,14 @@
     return paramsQuery;
   }
 
-  ScriptParamsController.prototype.load_config = function() {
+  AcceptdController.prototype.load_config = function() {
     var self = this;
 
     var url = this.settings.baseUrl + "/load_config";
 
     var successHandler = function(result) {
       self.scope.script_params.projects = result.projects;
+      self.scope.script_params.workspace_dir = result.workspace_dir;
       self.scope.script_params.selected_project = result.selected_project;
       self.scope.script_params.webapp_url = result.webapp_url;
       self.scope.script_params.timeout_in_seconds = result.timeout_in_seconds;
@@ -63,7 +64,7 @@
     this.http.get(url).success(successHandler).error(errorHandler);
   };
 
-  ScriptParamsController.prototype.save_config = function() {
+  AcceptdController.prototype.save_config = function() {
     var url = this.settings.baseUrl + "/save_config?" + buildParamsQuery(this.scope.script_params);
 
     var successHandler = function(result) {};
@@ -73,13 +74,13 @@
     this.http.get(url).success(successHandler).error(errorHandler);
   };
 
-  ScriptParamsController.prototype.cancel_run = function() {
+  AcceptdController.prototype.cancel_run = function() {
     if(this.progressbar && this.progressbar.status() == 'started') {
       this.progressbar.stop();
     }
   };
 
-  ScriptParamsController.prototype.reset_session = function() {
+  AcceptdController.prototype.reset_session = function() {
     var url = this.settings.baseUrl + "/reset_session";
 
     var successHandler = function(result) {};
@@ -89,11 +90,11 @@
     this.http.get(url).success(successHandler).error(errorHandler);
   };
 
-  ScriptParamsController.prototype.run_script = function() {
+  AcceptdController.prototype.run_script = function() {
     var self = this;
 
     var paramsNames = [
-      'selected_project', 'webapp_url', 'timeout_in_seconds', 'browser', 'driver', 'selected_files'
+      'workspace_dir', 'selected_project', 'webapp_url', 'timeout_in_seconds', 'browser', 'driver', 'selected_files'
     ];
 
     this.progressbar = this.streamService.progressbar();

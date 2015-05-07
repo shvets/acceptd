@@ -14,6 +14,16 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
   set :views, "#{File.expand_path(File.dirname(__FILE__))}/../views"
   set :public_dir, "#{File.expand_path(File.dirname(__FILE__))}/../../public"
 
+  # def initialize app = nil
+  #   require 'rspec/core/formatters/documentation_formatter'
+  #
+  #   # RSpec.configure do |config|
+  #   #   config.add_formatter RSpec::Core::Formatters::DocumentationFormatter
+  #   # end
+  #
+  #   super
+  # end
+
   get '/stylesheet.css' do
     headers 'Content-Type' => 'text/css; charset=utf-8'
     sass :stylesheet
@@ -24,11 +34,13 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
   end
 
   get '/load_config' do
-    load_config(WORKSPACE_DIR, ACCEPTD_CONFIG_FILE_NAME).to_json
+    workspace_dir = params[:workspace_dir] ? params[:workspace_dir] : WORKSPACE_DIR
+
+    load_config(workspace_dir, ACCEPTD_CONFIG_FILE_NAME).to_json
   end
 
   get '/save_config' do
-    save_config WORKSPACE_DIR, ACCEPTD_CONFIG_FILE_NAME, params
+    save_config(params[:workspace_dir], ACCEPTD_CONFIG_FILE_NAME, params)
 
     erb :index
   end
@@ -74,9 +86,9 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
 
       config['selected_project'] = projects.first
       config['selected_files'] = []
+      config['workspace_dir'] = workspace_dir
     end
 
-    config['workspace_dir'] = workspace_dir
     config['projects'] = projects
     config['files'] = feature_files(workspace_dir, config['selected_project'])
 
@@ -114,17 +126,17 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
   def generate_spec_helper workspace_dir, params
     template = ERB.new(File.read('lib/acceptd/spec_helper.rb.erb'))
 
-    spec_helper_filename = "tmp/#{params['selected_project']}/spec_helper.rb"
+    spec_helper_filename = "tmp/#{params[:selected_project]}/spec_helper.rb"
 
     FileUtils.makedirs(File.dirname(spec_helper_filename))
 
     File.open(spec_helper_filename, "w") do |file|
       namespace = OpenStruct.new(
           workspace_dir: workspace_dir,
-          driver: params['driver'],
-          browser: params['browser'],
-          timeout_in_seconds: params['timeout_in_seconds'],
-          selected_project: params['selected_project']
+          driver: params[:driver],
+          browser: params[:browser],
+          timeout_in_seconds: params[:timeout_in_seconds],
+          selected_project: params[:selected_project]
       )
 
       template_binding = namespace.instance_eval { binding }
@@ -136,34 +148,32 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
   end
 
   def execute_scripts params
-    workspace_dir = WORKSPACE_DIR
-    selected_project = params['selected_project']
-    selected_files = params['selected_files'].split(",")
+    execute_scripts_as_cmd params
+  end
+
+  def execute_scripts_as_cmd params
+    workspace_dir = params[:workspace_dir]
+    selected_project = params[:selected_project]
+    selected_files = params[:selected_files].split(",")
+    basedir = "#{workspace_dir}/#{selected_project}"
 
     spec_helper_filename = generate_spec_helper workspace_dir, params
-
-    basedir = "#{workspace_dir}/#{selected_project}"
 
     stream do |out|
       scripts = selected_files.collect {|file| "#{workspace_dir}/#{file}"}
 
       scripts.each do |script|
-        rspec_params = "-r turnip/rspec -I#{basedir} "
+        rspec_params = "-r turnip/rspec "
+        rspec_params += "-I#{basedir} "
         rspec_params += "-I#{File.dirname(spec_helper_filename)} "
         rspec_params += "--format RSpec::Core::Formatters::DocumentationFormatter"
 
-        out << run_rspec(params, rspec_params, script)
-
-        RSpec.clear_examples
+        out << run_rspec_as_cmd(rspec_params, script)
       end
     end
   end
 
-  def run_rspec params, rspec_params, script
-    ENV['DRIVER'] = params['driver']
-    ENV['BROWSER'] = params['browser']
-    ENV['TIMEOUT'] = params['timeout_in_seconds']
-
+  def run_rspec_as_cmd rspec_params, script
     output_stream = StringIO.new
 
     executor = ScriptExecutor.new
@@ -177,10 +187,39 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
     output_stream.string
   end
 
-  def run_rspec2 params, rspec_params, script
-    ENV['DRIVER'] = params['driver']
-    ENV['BROWSER'] = params['browser']
-    ENV['TIMEOUT'] = params['timeout_in_seconds']
+
+
+
+
+
+  def execute_scripts_inline params
+    workspace_dir = params[:workspace_dir]
+    selected_project = params[:selected_project]
+    selected_files = params[:selected_files].split(",")
+
+    spec_helper_filename = generate_spec_helper workspace_dir, params
+
+    basedir = "#{workspace_dir}/#{selected_project}"
+
+    stream do |out|
+      scripts = selected_files.collect {|file| "#{workspace_dir}/#{file}"}
+
+      scripts.each do |script|
+        rspec_params = "-r turnip/rspec -I#{basedir} "
+        rspec_params += "-I#{File.dirname(spec_helper_filename)} "
+        #rspec_params += "--format RSpec::Core::Formatters::DocumentationFormatter"
+
+        out << run_rspec_inline(rspec_params, script)
+      end
+
+      RSpec.clear_examples
+    end
+  end
+
+  def run_rspec_inline rspec_params, script
+    # ENV['DRIVER'] = params['driver']
+    # ENV['BROWSER'] = params['browser']
+    # ENV['TIMEOUT'] = params['timeout_in_seconds']
 
     output_stream = StringIO.new
 
@@ -192,7 +231,7 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
     begin
       RSpec::Core::Runner.run(argv, output_stream, output_stream)
     rescue Exception => e
-        p e
+       puts e
     ensure
       output_stream.close
     end

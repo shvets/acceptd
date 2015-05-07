@@ -5,8 +5,23 @@
       <h1><i><b>Acceptd</b></i> Control Center</h1>
     </div>
 
-    <form ng-controller="ScriptParamsController as scriptParamsCtrl">
+    <form ng-controller="AcceptdController as acceptdCtrl">
       <div class="panel-body">
+        <section class="well">
+          <div class="row">
+            <div class="col-lg-3 h3">
+              <label>
+                Workspace Directory
+              </label>
+            </div>
+
+            <div class="col-lg-6 h3">
+              <input type="text" ng-model="script_params.workspace_dir" class="form-control"
+                     placeholder="Basedir for your acceptance project(s)"/>
+            </div>
+          </div>
+        </section>
+
         <section class="well">
           <div class="row">
             <div class="col-lg-3 h3">
@@ -131,19 +146,19 @@
         <section class="well">
           <div class="row">
             <span class="col-lg-1">
-              <button class="btn btn-info" ng-click="scriptParamsCtrl.save_config()">Save</button>
+              <button class="btn btn-info" ng-click="acceptdCtrl.save_config()">Save</button>
             </span>
             <span class="col-lg-1">
-              <button class="btn btn-info" ng-click="scriptParamsCtrl.load_config()">Load</button>
+              <button class="btn btn-info" ng-click="acceptdCtrl.load_config()">Load</button>
             </span>
             <span class="col-lg-2">
-              <button class="btn btn-primary" ng-click="scriptParamsCtrl.run_script()">Run</button>
+              <button class="btn btn-primary" ng-click="acceptdCtrl.run_script()">Run</button>
             </span>
             <span class="col-lg-2">
-              <button class="btn btn-primary" ng-click="scriptParamsCtrl.cancel_run()">Cancel</button>
+              <button class="btn btn-primary" ng-click="acceptdCtrl.cancel_run()">Cancel</button>
             </span>
             <span class="col-lg-2">
-              <button class="btn btn-primary" ng-click="scriptParamsCtrl.reset_session()">Reset Session</button>
+              <button class="btn btn-primary" ng-click="acceptdCtrl.reset_session()">Reset Session</button>
             </span>
           </div>
 

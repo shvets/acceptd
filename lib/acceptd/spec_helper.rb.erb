@@ -22,20 +22,33 @@ AcceptanceTest.instance.configure({
   timeout_in_seconds: timeout_in_seconds
 })
 
-RSpec.configure do |config|
-  config.before(:each) do
-    local_browser = config.instance_variable_get(:@local_browser)
+# RSpec.configure do |config|
+#   config.add_formatter :documentation
+# end
 
-    config.instance_variable_set(:@local_browser, Capybara.current_session.driver.browser) unless local_browser
-  end
+# RSpec.configure do |config|
+#   config.before(:each) do
+#     local_browser = config.instance_variable_get(:@local_browser)
+#
+#     config.instance_variable_set(:@local_browser, Capybara.current_session.driver.browser) unless local_browser
+#   end
+#
+#   config.after(:suite) do
+#     local_browser = config.instance_variable_get(:@local_browser)
+#
+#     if local_browser
+#       local_browser.quit
+#
+#       config.instance_variable_set(:@local_browser, nil)
+#     end
+#   end
+# end
+#
+# require 'capybara/selenium/driver'
+#
+# class Capybara::Selenium::Driver
+#   def browser
+#     @browser ||= Selenium::WebDriver.for(options[:browser], options.reject { |key,val| SPECIAL_OPTIONS.include?(key) })
+#   end
+# end
 
-  config.after(:suite) do
-    local_browser = config.instance_variable_get(:@local_browser)
-
-    if local_browser
-      local_browser.quit
-
-      config.instance_variable_set(:@local_browser, nil)
-    end
-  end
-end
