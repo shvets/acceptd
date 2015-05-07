@@ -17,7 +17,12 @@
 
             <div class="col-lg-6 h3">
               <input type="text" ng-model="script_params.workspace_dir" class="form-control"
-                     placeholder="Basedir for your acceptance project(s)"/>
+                     placeholder="Root directory for your acceptance project(s)"/>
+            </div>
+
+            <div data-tree-id="acceptd" data-tree-model="treeModel"
+                 data-angular-treeview="true" data-node-children="children"
+                 data-node-id="id" data-node-label="label">
             </div>
           </div>
         </section>
