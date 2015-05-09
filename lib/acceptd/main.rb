@@ -7,7 +7,7 @@ require 'sass'
 require 'acceptd/common_routes'
 require 'acceptd/app_routes'
 
-class Acceptd::App < Sinatra::Base
+class Acceptd::Main < Sinatra::Base
   helpers Sinatra::Streaming
 
   configure :development do

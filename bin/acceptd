@@ -9,4 +9,4 @@ trap('INT') { puts "Program was interrupted..."; exit }
 
 require 'vegas'
 
-Vegas::Runner.new(Acceptd::App, 'acceptd')
+Vegas::Runner.new(Acceptd::Main, 'acceptd')

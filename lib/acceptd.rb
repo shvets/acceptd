@@ -1,2 +1,2 @@
 require 'acceptd/version'
-require 'acceptd/app'
+require 'acceptd/main'

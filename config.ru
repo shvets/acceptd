@@ -11,7 +11,7 @@ trap(:INT) { exit }
 app = Rack::Builder.new {
   use Rack::CommonLogger
 
-  run Acceptd::App
+  run Acceptd::Main
 }.to_app
 
 run app

@@ -34,7 +34,7 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
   end
 
   get '/load_config' do
-    workspace_dir = params[:workspace_dir] ? params[:workspace_dir] : WORKSPACE_DIR
+    workspace_dir = params[:workspace_dir] ? params[:workspace_dir] : File.expand_path(WORKSPACE_DIR, File.dirname(__FILE__))
 
     load_config(workspace_dir, ACCEPTD_CONFIG_FILE_NAME).to_json
   end
