@@ -34,7 +34,7 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
   end
 
   get '/load_config' do
-    workspace_dir = params[:workspace_dir] ? params[:workspace_dir] : File.expand_path(WORKSPACE_DIR, File.dirname(__FILE__))
+    workspace_dir = params[:workspace_dir] ? params[:workspace_dir] : File.expand_path(WORKSPACE_DIR)
 
     load_config(workspace_dir, ACCEPTD_CONFIG_FILE_NAME).to_json
   end
@@ -149,6 +149,7 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
 
   def execute_scripts params
     execute_scripts_as_cmd params
+    #execute_scripts_inline params
   end
 
   def execute_scripts_as_cmd params
@@ -187,27 +188,21 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
     output_stream.string
   end
 
-
-
-
-
-
   def execute_scripts_inline params
     workspace_dir = params[:workspace_dir]
     selected_project = params[:selected_project]
     selected_files = params[:selected_files].split(",")
+    basedir = "#{workspace_dir}/#{selected_project}"
 
     spec_helper_filename = generate_spec_helper workspace_dir, params
-
-    basedir = "#{workspace_dir}/#{selected_project}"
 
     stream do |out|
       scripts = selected_files.collect {|file| "#{workspace_dir}/#{file}"}
 
       scripts.each do |script|
-        rspec_params = "-r turnip/rspec -I#{basedir} "
+        rspec_params = "-r turnip/rspec "
+        rspec_params += "-I#{basedir} "
         rspec_params += "-I#{File.dirname(spec_helper_filename)} "
-        #rspec_params += "--format RSpec::Core::Formatters::DocumentationFormatter"
 
         out << run_rspec_inline(rspec_params, script)
       end
@@ -217,10 +212,6 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
   end
 
   def run_rspec_inline rspec_params, script
-    # ENV['DRIVER'] = params['driver']
-    # ENV['BROWSER'] = params['browser']
-    # ENV['TIMEOUT'] = params['timeout_in_seconds']
-
     output_stream = StringIO.new
 
     RSpec::Core::Runner.disable_autorun!
@@ -228,29 +219,52 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
     argv = rspec_params.split(" ")
     argv << script
 
+    listener = register_rspec_reporter output_stream
+
     begin
-      RSpec::Core::Runner.run(argv, output_stream, output_stream)
+      RSpec::Core::Runner.run(argv)
     rescue Exception => e
        puts e
     ensure
+      unregister_rspec_reporter listener
       output_stream.close
     end
 
     output_stream.string
   end
 
-  # def create_rspec_reporter output_stream
-  #   config = RSpec.configuration
-  #
-  #   formatter = RSpec::Core::Formatters::DocumentationFormatter.new(output_stream)
-  #
-  #   reporter = RSpec::Core::Reporter.new(config)
-  #   config.instance_variable_set(:@reporter, reporter)
-  #
-  #   loader = config.send(:formatter_loader)
-  #   notifications = loader.send(:notifications_for, RSpec::Core::Formatters::DocumentationFormatter)
-  #
-  #   reporter.register_listener(formatter, *notifications)
-  # end
+  def register_rspec_reporter output_stream
+    formatter_class = RSpec::Core::Formatters::DocumentationFormatter
+
+    config = RSpec.configuration
+
+    formatter = formatter_class.new(output_stream)
+
+    reporter = RSpec::Core::Reporter.new(config)
+    config.instance_variable_set(:@reporter, reporter)
+
+    loader = config.send(:formatter_loader)
+    notifications = loader.send(:notifications_for, formatter_class)
+
+    reporter.register_listener(formatter, *notifications)
+
+    formatter
+  end
+
+  def unregister_rspec_reporter listener
+    config = RSpec.configuration
+
+    reporter = config.instance_variable_get(:@reporter)
+
+    loader = config.send(:formatter_loader)
+
+    notifications = loader.send(:notifications_for, RSpec::Core::Formatters::DocumentationFormatter)
+
+    listeners = reporter.instance_variable_get(:@listeners)
+
+    notifications.each do |notification|
+      listeners[notification.to_sym].delete listener
+    end
+  end
 
 end

@@ -23,11 +23,7 @@ AcceptanceTest.instance.configure({
 })
 
 # RSpec.configure do |config|
-#   config.add_formatter :documentation
-# end
-
-# RSpec.configure do |config|
-#   config.before(:each) do
+#   config.before do
 #     local_browser = config.instance_variable_get(:@local_browser)
 #
 #     config.instance_variable_set(:@local_browser, Capybara.current_session.driver.browser) unless local_browser
@@ -41,14 +37,6 @@ AcceptanceTest.instance.configure({
 #
 #       config.instance_variable_set(:@local_browser, nil)
 #     end
-#   end
-# end
-#
-# require 'capybara/selenium/driver'
-#
-# class Capybara::Selenium::Driver
-#   def browser
-#     @browser ||= Selenium::WebDriver.for(options[:browser], options.reject { |key,val| SPECIAL_OPTIONS.include?(key) })
 #   end
 # end
 
