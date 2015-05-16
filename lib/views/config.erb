@@ -1,0 +1,138 @@
+<div class="container" ng-app="app">
+
+  <div class="panel panel-primary">
+    <div class="panel-heading text-center">
+      <h1><i><b>Acceptd</b></i> Control Center Configuration</h1>
+    </div>
+
+    <form ng-controller="ConfigController as configCtrl">
+      <div class="panel-body">
+        <section class="well">
+          <div class="row">
+            <div class="col-lg-3 h3">
+              <label>
+                Workspace Directory
+              </label>
+            </div>
+
+            <div class="col-lg-6 h3">
+              <input type="text" ng-model="script_params.workspace_dir" class="form-control"
+                     placeholder="Root directory for your acceptance project(s)"/>
+            </div>
+
+            <div data-tree-id="acceptd" data-tree-model="treeModel"
+                 data-angular-treeview="true" data-node-children="children"
+                 data-node-id="id" data-node-label="label">
+            </div>
+          </div>
+        </section>
+
+        <section class="well">
+          <div class="row">
+            <div class="col-lg-3 h3">
+              <label>
+                Project
+              </label>
+            </div>
+
+            <div class="col-lg-6 h3">
+              <select ng-model="script_params.selected_project" class="form-control"
+                      ng-options="project for project in script_params.projects">
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <section class="well">
+          <div class="row">
+            <div class="col-lg-3 h3">
+              <label>
+                Web Application URL
+              </label>
+            </div>
+
+            <div class="col-lg-6 h3">
+              <input type="url" ng-model="script_params.webapp_url" class="form-control"
+                     placeholder="URL of web site you want to test"/>
+            </div>
+          </div>
+        </section>
+
+        <section class="well">
+          <div class="row">
+            <div class="col-lg-3 h3">
+              <label>
+                Timeout in seconds
+              </label>
+            </div>
+
+            <div class="col-lg-2 h3">
+              <input type="text" ng-model="script_params.timeout_in_seconds" class="form-control"
+                     placeholder="Timeout in seconds"/>
+            </div>
+          </div>
+        </section>
+
+        <section class="well">
+          <div class="row">
+            <div class="col-lg-3 h3">
+              <label>
+                Browser
+              </label>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="radio">
+                <label>
+                  <input type="radio" ng-model="script_params.browser" value='firefox' ng-checked="script_params.browser == 'firefox'">
+                  Firefox
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" ng-model="script_params.browser" value='chrome' ng-checked="script_params.browser == 'chrome'">
+                  Chrome
+                </label>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="well">
+          <div class="row">
+            <div class="col-lg-3 h3">
+              <label>
+                Driver
+              </label>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="radio">
+                <label>
+                  <input type="radio" ng-model="script_params.driver" ng-checked="script_params.driver == 'selenium'">
+                  Selenium
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" ng-model="script_params.driver" ng-checked="script_params.driver == 'webkit'">
+                  Webkit
+                </label>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="well">
+          <div class="row">
+            <span class="col-lg-1">
+              <button class="btn btn-info" ng-click="configCtrl.save_and_navigate_to_home()">Save & Return</button>
+            </span>
+          </div>
+        </section>
+      </div>
+    </form>
+
+  </div>
+
+</div>

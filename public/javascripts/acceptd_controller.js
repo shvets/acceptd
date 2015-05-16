@@ -5,13 +5,15 @@
 
   namespace.controller("AcceptdController", AcceptdController);
 
-  function AcceptdController($scope, $http, $q, Settings, StreamService) {
+  function AcceptdController($scope, $http, $q, Settings, StreamService, $window, ConfigService) {
     this.scope = $scope;
     this.http = $http;
     this.q = $q;
 
     this.settings = Settings;
     this.streamService = StreamService;
+    this.window = $window;
+    this.configService = ConfigService;
 
     this.scope.script_params = {};
     this.scope.result = "";
@@ -19,84 +21,12 @@
     var self = this;
 
     $scope.$watch('$viewContentLoaded', function() {
-      self.load_config();
+      self.configService.load_config($scope.script_params);
     });
-
-    $scope.treeModel = getTreeData();
-
-    $scope.$watch( 'acceptd.currentNode', function( newObj, oldObj ) {
-      if( $scope.acceptd && angular.isObject($scope.acceptd.currentNode) ) {
-        //console.log( 'Node Selected!!' );
-        //console.log( $scope.acceptd.currentNode );
-      }
-    }, false);
   }
 
-  function getTreeData() {
-    return [
-      { "label" : "User", "id" : "role1", "children" : [
-        { "label" : "subUser1", "id" : "role11", "children" : [] },
-        { "label" : "subUser2", "id" : "role12", "children" : [
-          { "label" : "subUser2-1", "id" : "role121", "children" : [
-            { "label" : "subUser2-1-1", "id" : "role1211", "children" : [] },
-            { "label" : "subUser2-1-2", "id" : "role1212", "children" : [] }
-          ]}
-        ]}
-      ]},
-      { "label" : "Admin", "id" : "role2", "children" : [] },
-      { "label" : "Guest", "id" : "role3", "children" : [] }
-    ];
-  }
-
-  function buildParamsQuery(params, paramsNames) {
-    var paramsQuery = "";
-
-    angular.forEach(params, function(value, key) {
-      var separator = (paramsQuery == "") ? "" : "&";
-
-      if(paramsNames == undefined) {
-        paramsQuery += separator + key + "=" + value;
-      }
-      else {
-        if(paramsNames.indexOf(key) >= 0) {
-          paramsQuery += separator + key + "=" + value;
-        }
-      }
-    });
-
-    return paramsQuery;
-  }
-
-  AcceptdController.prototype.load_config = function() {
-    var self = this;
-
-    var url = this.settings.baseUrl + "/load_config";
-
-    var successHandler = function(result) {
-      self.scope.script_params.projects = result.projects;
-      self.scope.script_params.workspace_dir = result.workspace_dir;
-      self.scope.script_params.selected_project = result.selected_project;
-      self.scope.script_params.webapp_url = result.webapp_url;
-      self.scope.script_params.timeout_in_seconds = result.timeout_in_seconds;
-      self.scope.script_params.browser = result.browser;
-      self.scope.script_params.driver = result.driver;
-      self.scope.script_params.files = result.files;
-      self.scope.script_params.selected_files = result.selected_files;
-    };
-
-    var errorHandler = function(result) { };
-
-    this.http.get(url).success(successHandler).error(errorHandler);
-  };
-
-  AcceptdController.prototype.save_config = function() {
-    var url = this.settings.baseUrl + "/save_config?" + buildParamsQuery(this.scope.script_params);
-
-    var successHandler = function(result) {};
-
-    var errorHandler = function(result) {};
-
-    this.http.get(url).success(successHandler).error(errorHandler);
+  AcceptdController.prototype.navigate_to_config = function () {
+    this.window.location = '/config';
   };
 
   AcceptdController.prototype.cancel_run = function() {
@@ -125,7 +55,7 @@
     this.progressbar = this.streamService.progressbar();
     this.scope.progressbar = this.progressbar.control();
 
-    var url = this.settings.baseUrl + "/run?" + buildParamsQuery(this.scope.script_params, paramsNames);
+    var url = this.settings.baseUrl + "/run?" + this.configService.buildParamsQuery(this.scope.script_params, paramsNames);
 
     this.scope.result = "";
 

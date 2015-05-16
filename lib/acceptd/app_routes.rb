@@ -33,6 +33,10 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
     erb :index
   end
 
+  get '/config' do
+    erb :config
+  end
+
   get '/load_config' do
     workspace_dir = params[:workspace_dir] ? params[:workspace_dir] : File.expand_path(WORKSPACE_DIR)
 
