@@ -3,7 +3,7 @@ require "acceptd/routes_base"
 class Acceptd::CommonRoutes < Acceptd::RoutesBase
 
   get '/?:file_name?.html' do
-    send_file File.join(settings.views, "/partials/#{params[:file_name]}.erb")
+    erb params[:file_name]
   end
 
   get "*" do

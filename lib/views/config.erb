@@ -12,7 +12,7 @@
         <section class="well">
           <div class="row">
             <span class="col-lg-1">
-             <ng-include src="'back_button.html'"></ng-include>
+              <%= partial "partials/back_button", locals: {back_button_action: 'configCtrl.save_and_navigate_to_home()'} %>
             </span>
           </div>
         </section>
@@ -136,7 +136,7 @@
         <section class="well">
           <div class="row">
             <span class="col-lg-1">
-             <ng-include src="'back_button.html'"></ng-include>
+              <%= partial "partials/back_button", locals: {back_button_action: 'configCtrl.save_and_navigate_to_home()'} %>
             </span>
           </div>
         </section>
