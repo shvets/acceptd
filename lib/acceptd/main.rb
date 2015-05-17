@@ -6,6 +6,7 @@ require 'sass'
 
 require 'acceptd/common_routes'
 require 'acceptd/app_routes'
+require 'acceptd/config_routes'
 
 class Acceptd::Main < Sinatra::Base
   helpers Sinatra::Streaming
@@ -19,6 +20,7 @@ class Acceptd::Main < Sinatra::Base
   end
 
   use Acceptd::AppRoutes
+  use Acceptd::ConfigRoutes
 
   use Acceptd::CommonRoutes
 

@@ -1,7 +1,7 @@
 require "sinatra/reloader" if development?
 
 class Acceptd::RoutesBase < Sinatra::Base
-  register Sinatra::Reloader
+  register Sinatra::Reloader if development?
 
   use Rack::Deflater
 
@@ -23,4 +23,8 @@ class Acceptd::RoutesBase < Sinatra::Base
   # before %r{.+\.xml} do
   #   content_type 'application/xml'
   # end
+
+  set :views, "#{File.expand_path(File.dirname(__FILE__))}/../views"
+
+  set :public_dir, "#{File.expand_path(File.dirname(__FILE__))}/../../public"
 end

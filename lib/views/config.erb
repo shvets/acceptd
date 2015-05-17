@@ -1,12 +1,22 @@
 <div class="container" ng-app="app">
 
   <div class="panel panel-primary">
-    <div class="panel-heading text-center">
-      <h1><i><b>Acceptd</b></i> Control Center Configuration</h1>
-    </div>
-
     <form ng-controller="ConfigController as configCtrl">
       <div class="panel-body">
+        <section class="well panel-heading text-center">
+          <div class="row">
+            <h1><i><b>Acceptd</b></i> Control Center Configuration</h1>
+          </div>
+        </section>
+
+        <section class="well">
+          <div class="row">
+            <span class="col-lg-1">
+             <ng-include src="'back_button.html'"></ng-include>
+            </span>
+          </div>
+        </section>
+
         <section class="well">
           <div class="row">
             <div class="col-lg-3 h3">
@@ -126,7 +136,7 @@
         <section class="well">
           <div class="row">
             <span class="col-lg-1">
-              <button class="btn btn-info" ng-click="configCtrl.save_and_navigate_to_home()">Save & Return</button>
+             <ng-include src="'back_button.html'"></ng-include>
             </span>
           </div>
         </section>
