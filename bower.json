@@ -15,11 +15,9 @@
   ],
   "dependencies": {
     "angular": "~1.3.15",
-    "angular-bootstrap": "~0.12.0",
-    "angular-timer": "~1.3.1",
-    "angular-treeview": ""
-  },
-  "resolutions": {
-    "angular": ">=1.3.0 <1.4.0"
+    "angular-bootstrap": "~0.13.0",
+    "jquery": "",
+    "jstree": "",
+    "jstree-directive": ""
   }
 }

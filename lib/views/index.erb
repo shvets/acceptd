@@ -10,36 +10,59 @@
         <section class="well">
           <div class="row">
             <span class="col-lg-2">
-              <button class="btn btn-info" ng-click="acceptdCtrl.navigate_to_config()">Config</button>
-            </span>
-            <span class="col-lg-2">
-              <button class="btn btn-info" ng-click="acceptdCtrl.load_config()">Load</button>
-            </span>
-            <span class="col-lg-2">
-              <button class="btn btn-info" ng-click="acceptdCtrl.save_config()">Save</button>
-            </span>
-          </div>
-          <div class="row">
-            <span class="col-lg-2">
-              Workspace Directory: <b>{{script_params.workspace_dir}}</b>
-            </span>
-          </div>
-          <div class="row">
-            <span class="col-lg-2">
-              Project: <b>{{script_params.selected_project}}</b>
-            </span>
-          </div>
-          <div class="row">
-            <span class="col-lg-2">
+              Timeout in seconds: <b>{{script_params.timeout_in_seconds}}</b>;
+              Browser: <b>{{script_params.browser}}</b>;
+              Driver: <b>{{script_params.driver}}</b>;
               WebApp URL: <b>{{script_params.webapp_url}}</b>
             </span>
           </div>
           <div class="row">
             <span class="col-lg-2">
-              Timeout in seconds: <b>{{script_params.timeout_in_seconds}}</b>;
-              Browser: <b>{{script_params.browser}}</b>;
-              Driver: <b>{{script_params.driver}}</b>
+              <button class="btn btn-info" ng-click="acceptdCtrl.navigate_to_config()">Config</button>
             </span>
+            <span class="col-lg-2">
+              <button class="btn btn-info" ng-click="acceptdCtrl.save_config()">Save</button>
+            </span>
+          </div>
+        </section>
+
+        <section class="well">
+          <div class="row">
+            <div class="col-lg-3 h3">
+              <label>
+                Workspace Directory
+              </label>
+            </div>
+
+            <div class="col-md-4 tree-browser">
+              <js-tree tree-events="select_node:nodeSelected" tree-ajax="/file_browser/tree"></js-tree>
+            </div>
+
+            <div class="col-md-8 file-viewer">
+              <pre><code>{{fileViewer}}</code></pre>
+            </div>
+
+            <div class="col-lg-6 h3">
+              <input type="text" ng-model="script_params.workspace_dir" class="form-control"
+                     ng-change="update_projects()"
+                     placeholder="Root directory for your acceptance project(s)"/>
+            </div>
+          </div>
+        </section>
+
+        <section class="well">
+          <div class="row">
+            <div class="col-lg-3 h3">
+              <label>
+                Project
+              </label>
+            </div>
+
+            <div class="col-lg-6 h3">
+              <select ng-model="script_params.selected_project" class="form-control"
+                      ng-options="project for project in script_params.projects">
+              </select>
+            </div>
           </div>
         </section>
 

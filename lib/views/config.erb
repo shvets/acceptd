@@ -3,54 +3,11 @@
   <div class="panel panel-primary">
     <form ng-controller="ConfigController as configCtrl">
       <div class="panel-body">
-        <section class="well panel-heading text-center">
-          <div class="row">
-            <h1><i><b>Acceptd</b></i> Control Center Configuration</h1>
-          </div>
-        </section>
-
         <section class="well">
           <div class="row">
             <span class="col-lg-1">
               <%= partial "partials/back_button", locals: {back_button_action: 'configCtrl.save_and_navigate_to_home()'} %>
             </span>
-          </div>
-        </section>
-
-        <section class="well">
-          <div class="row">
-            <div class="col-lg-3 h3">
-              <label>
-                Workspace Directory
-              </label>
-            </div>
-
-            <div class="col-lg-6 h3">
-              <input type="text" ng-model="script_params.workspace_dir" class="form-control"
-                     ng-change="update_projects()"
-                     placeholder="Root directory for your acceptance project(s)"/>
-            </div>
-
-            <!--<div data-tree-id="acceptd" data-tree-model="treeModel"-->
-            <!--data-angular-treeview="true" data-node-children="children"-->
-            <!--data-node-id="id" data-node-label="label">-->
-            <!--</div>-->
-          </div>
-        </section>
-
-        <section class="well">
-          <div class="row">
-            <div class="col-lg-3 h3">
-              <label>
-                Project
-              </label>
-            </div>
-
-            <div class="col-lg-6 h3">
-              <select ng-model="script_params.selected_project" class="form-control"
-                      ng-options="project for project in script_params.projects">
-              </select>
-            </div>
           </div>
         </section>
 

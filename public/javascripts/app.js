@@ -3,5 +3,5 @@
 
   var app = angular.module("app", []);
 
-  angular.module('app', ['ui.bootstrap', 'angularTreeview']);
+  angular.module('app', ['ui.bootstrap', 'jsTree.directive']);
 })();
