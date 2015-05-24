@@ -53,6 +53,10 @@
 
       status: function() {
         return control.status;
+      },
+
+      value: function () {
+        return control.value;
       }
     };
   });

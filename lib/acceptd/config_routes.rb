@@ -8,7 +8,8 @@ require 'capybara'
 require 'erb'
 
 class Acceptd::ConfigRoutes < Acceptd::RoutesBase
-  ACCEPTD_CONFIG_FILE_NAME = ".acceptd.yaml"
+  ACCEPTD_ROOT_DIR = File.expand_path(".")
+  ACCEPTD_CONFIG_FILE_NAME = "#{ACCEPTD_ROOT_DIR}/.acceptd.yaml"
   WORKSPACE_DIR = 'workspace'
 
   get '/config' do
@@ -16,46 +17,51 @@ class Acceptd::ConfigRoutes < Acceptd::RoutesBase
   end
 
   get '/load_config' do
-    workspace_dir = params[:workspace_dir] ? params[:workspace_dir] : File.expand_path(WORKSPACE_DIR)
-
-    load_config(workspace_dir, ACCEPTD_CONFIG_FILE_NAME).to_json
+    load_config(ACCEPTD_CONFIG_FILE_NAME).to_json
   end
 
   get '/save_config' do
-    save_config(params[:workspace_dir], ACCEPTD_CONFIG_FILE_NAME, params)
+    save_config(ACCEPTD_CONFIG_FILE_NAME, params)
 
     erb :index
   end
 
+  get '/projects' do
+    projects(params['workspace_dir']).to_json
+  end
+
+  get '/feature_files' do
+    feature_files(params['workspace_dir'], params['selected_project']).to_json
+  end
+
   private
 
-  def load_config workspace_dir, file_name
-    config = {}
+  def load_config file_name
+    config = File.exist?(file_name) ? YAML.load_file(file_name) : {}
 
-    projects = projects(workspace_dir)
-
-    if File.exist?("#{workspace_dir}/#{file_name}")
-      config.merge!(YAML.load_file("#{workspace_dir}/#{file_name}"))
-    else
+    if config.empty?
+      config['workspace_dir'] = ACCEPTD_ROOT_DIR + "/" + WORKSPACE_DIR
       config['webapp_url'] = "http://localhost:4567"
 
+      config['timeout_in_seconds'] = "10"
       config['browser'] = "firefox"
       config['driver'] = "selenium"
-      config['timeout_in_seconds'] = "10"
 
-      config['selected_project'] = projects.first
       config['selected_files'] = []
-      config['workspace_dir'] = workspace_dir
     end
 
+    projects = projects(config['workspace_dir'])
+
+    config['selected_project'] = projects.first unless config['selected_project']
+
     config['projects'] = projects
-    config['files'] = feature_files(workspace_dir, config['selected_project'])
+    config['feature_files'] = feature_files(config['workspace_dir'], config['selected_project'])
 
     config
   end
 
-  def save_config workspace_dir, file_name, config
-    File.open("#{workspace_dir}/#{file_name}", 'w') { |file| file.write config.to_yaml }
+  def save_config file_name, config
+    File.open(file_name, 'w') { |file| file.write config.to_yaml }
   end
 
   def projects workspace_dir
@@ -64,9 +70,15 @@ class Acceptd::ConfigRoutes < Acceptd::RoutesBase
     files = Dir.glob("#{workspace_dir}/*")
 
     files.each do |file|
-      basename = File.basename(file)
+      short_name = file[workspace_dir.size+1..-1]
 
-      projects << basename if basename != 'support'
+      if File.directory?(file)
+        feature_files = Dir.glob("#{file}/**/*.feature")
+
+        if File.basename(short_name) != 'support' and feature_files.size > 0
+          projects << short_name
+        end
+      end
     end
 
     projects

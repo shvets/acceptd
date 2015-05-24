@@ -11,10 +11,31 @@
           <div class="row">
             <span class="col-lg-2">
               <button class="btn btn-info" ng-click="acceptdCtrl.navigate_to_config()">Config</button>
-              &nbsp;&nbsp;&nbsp;&nbsp;
+            </span>
+            <span class="col-lg-2">
+              <button class="btn btn-info" ng-click="acceptdCtrl.load_config()">Load</button>
+            </span>
+            <span class="col-lg-2">
+              <button class="btn btn-info" ng-click="acceptdCtrl.save_config()">Save</button>
+            </span>
+          </div>
+          <div class="row">
+            <span class="col-lg-2">
+              Workspace Directory: <b>{{script_params.workspace_dir}}</b>
+            </span>
+          </div>
+          <div class="row">
+            <span class="col-lg-2">
+              Project: <b>{{script_params.selected_project}}</b>
+            </span>
+          </div>
+          <div class="row">
+            <span class="col-lg-2">
               WebApp URL: <b>{{script_params.webapp_url}}</b>
-              <br>
-               &nbsp;&nbsp;&nbsp;&nbsp;
+            </span>
+          </div>
+          <div class="row">
+            <span class="col-lg-2">
               Timeout in seconds: <b>{{script_params.timeout_in_seconds}}</b>;
               Browser: <b>{{script_params.browser}}</b>;
               Driver: <b>{{script_params.driver}}</b>
@@ -41,7 +62,8 @@
             <div class="col-lg-12">
               <select ng-model="script_params.selected_files" class="form-control" multiple size="9">
                 <option ng-selected="script_params.selected_files.indexOf(file) >=0"
-                        ng-repeat="file in script_params.files" value="{{file}}">{{file}}</option>
+                        ng-repeat="file in script_params.feature_files" value="{{file}}">{{file}}
+                </option>
               </select>
             </div>
           </div>
@@ -50,21 +72,22 @@
         <section class="well">
           <div class="row">
             <span class="col-lg-2">
-              <button class="btn btn-primary" ng-click="acceptdCtrl.run_script()">Run</button>
+              <button name="run_script" ng-disabled="{{progressbar.status() === 'started'}}" class="btn btn-primary" ng-click="acceptdCtrl.run_script()">Run</button>
             </span>
             <span class="col-lg-2">
-              <button class="btn btn-primary" ng-click="acceptdCtrl.cancel_run()">Cancel</button>
+              <button name="cancel_run" ng-disabled="{{progressbar.status() != 'started'}}" class="btn btn-primary" ng-click="acceptdCtrl.cancel_run()">Cancel</button>
             </span>
             <span class="col-lg-2">
               <button class="btn btn-primary" ng-click="acceptdCtrl.reset_session()">Reset Session</button>
             </span>
+
           </div>
 
           <div class="row">
             <div class="col-lg-9">
-              <progressbar ng-hide="progressbar.value < 1" type="success" value="progressbar.value" max="100">
-                <i ng-if="progressbar.status == 'completed'">Success!</i>
-                <i ng-if="progressbar.status == 'error'" style="color: red">Failed!</i>
+              <progressbar ng-hide="progressbar.value() < 1" type="success" value="progressbar.value()" max="100">
+                <i ng-if="progressbar.status() == 'completed'">Success!</i>
+                <i ng-if="progressbar.status() == 'error'" style="color: red">Failed!</i>
               </progressbar>
             </div>
           </div>

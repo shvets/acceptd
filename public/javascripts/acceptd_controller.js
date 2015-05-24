@@ -5,18 +5,21 @@
 
   namespace.controller("AcceptdController", AcceptdController);
 
-  function AcceptdController($scope, $http, $q, Settings, StreamService, $window, ConfigService) {
+  function AcceptdController($scope, $http, $q, Settings, $window, ConfigService, Progressbar) {
     this.scope = $scope;
     this.http = $http;
     this.q = $q;
 
     this.settings = Settings;
-    this.streamService = StreamService;
     this.window = $window;
     this.configService = ConfigService;
+    this.progressbar = Progressbar;
+
+    this.scope.progressbar = this.progressbar;
 
     this.scope.script_params = {};
     this.scope.result = "";
+    this.scope.running_script = false;
 
     var self = this;
 
@@ -24,6 +27,10 @@
       self.configService.load_config($scope.script_params);
     });
   }
+
+  AcceptdController.prototype.save_config = function () {
+    this.configService.save_config(this.scope.script_params);
+  };
 
   AcceptdController.prototype.navigate_to_config = function () {
     this.window.location = '/config';
@@ -48,12 +55,11 @@
   AcceptdController.prototype.run_script = function() {
     var self = this;
 
+    this.scope.running_script = true;
+
     var paramsNames = [
       'workspace_dir', 'selected_project', 'webapp_url', 'timeout_in_seconds', 'browser', 'driver', 'selected_files'
     ];
-
-    this.progressbar = this.streamService.progressbar();
-    this.scope.progressbar = this.progressbar.control();
 
     var url = this.settings.baseUrl + "/run?" + this.configService.buildParamsQuery(this.scope.script_params, paramsNames);
 

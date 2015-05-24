@@ -16,26 +16,37 @@
           script_params.timeout_in_seconds = result.timeout_in_seconds;
           script_params.browser = result.browser;
           script_params.driver = result.driver;
-          script_params.files = result.files;
+          script_params.feature_files = result.feature_files;
           script_params.selected_files = result.selected_files;
         };
 
-        var errorHandler = function (result) {
-        };
-
-        $http.get(url).success(successHandler).error(errorHandler);
+        $http.get(url).success(successHandler);
       },
 
       save_config: function (script_params) {
         var url = Settings.baseUrl + "/save_config?" + this.buildParamsQuery(script_params);
 
+        $http.get(url);
+      },
+
+      projects: function (script_params) {
+        var url = Settings.baseUrl + "/projects?" + this.buildParamsQuery(script_params, ['workspace_dir']);
+
         var successHandler = function (result) {
+          script_params.projects = result;
+
+          if (result.length > 0) {
+            script_params.selected_project = result[0];
+          }
         };
 
-        var errorHandler = function (result) {
-        };
+        $http.get(url).success(successHandler);
+      },
 
-        $http.get(url).success(successHandler).error(errorHandler);
+      feature_files: function (script_params) {
+        var url = Settings.baseUrl + "/feature_files?" + this.buildParamsQuery(script_params, ['workspace_dir', 'selected_project']);
+
+        $http.get(url);
       },
 
       buildParamsQuery: function (params, paramsNames) {

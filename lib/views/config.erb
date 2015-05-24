@@ -27,13 +27,14 @@
 
             <div class="col-lg-6 h3">
               <input type="text" ng-model="script_params.workspace_dir" class="form-control"
+                     ng-change="update_projects()"
                      placeholder="Root directory for your acceptance project(s)"/>
             </div>
 
-            <div data-tree-id="acceptd" data-tree-model="treeModel"
-                 data-angular-treeview="true" data-node-children="children"
-                 data-node-id="id" data-node-label="label">
-            </div>
+            <!--<div data-tree-id="acceptd" data-tree-model="treeModel"-->
+            <!--data-angular-treeview="true" data-node-children="children"-->
+            <!--data-node-id="id" data-node-label="label">-->
+            <!--</div>-->
           </div>
         </section>
 
@@ -130,14 +131,6 @@
                 </label>
               </div>
             </div>
-          </div>
-        </section>
-
-        <section class="well">
-          <div class="row">
-            <span class="col-lg-1">
-              <%= partial "partials/back_button", locals: {back_button_action: 'configCtrl.save_and_navigate_to_home()'} %>
-            </span>
           </div>
         </section>
       </div>
