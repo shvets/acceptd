@@ -4,14 +4,14 @@
   var namespace = angular.module("app");
 
   namespace.factory('FetchFileFactory', function ($http) {
-    var _factory = {};
+    var factory = {};
 
-    _factory.fetchFile = function (file) {
+    factory.fetchFile = function (file) {
       console.log(file);
-      return $http.get("/file_browser/resource");
+      return $http.get("/file_browser/node?name=" + file);
     };
 
-    return _factory;
+    return factory;
   });
 
 }());

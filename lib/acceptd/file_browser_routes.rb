@@ -3,24 +3,32 @@ require "acceptd/routes_base"
 class Acceptd::FileBrowserRoutes < Acceptd::RoutesBase
 
   get "/file_browser/tree" do
-    tree = []
+    content_type :json
 
-    id = params[:id].to_i
+    if params[:id] == "1"
+      tree = []
 
-    p id
+      directories(ENV['HOME']).each do |dir|
+        tree << process_node(dir)
+      end
 
-    if id == 1
-      tree << process_node(File.expand_path("lib"))
+      tree.to_json
     else
-      tree << process_node("lib/acceptd")
-      tree << process_node("lib/views")
-      tree << process_node("lib/accepts.rb")
-    end
+      tree = []
 
-    tree.to_json
+      directories(params[:id]).each do |dir|
+        tree << process_node(dir)
+      end
+
+      tree.to_json
+
+      tree.to_json
+    end
   end
 
-  get "/file_browser/resource" do
+  get "/file_browser/node" do
+    content_type :json
+
     tree = []
 
     tree.to_json
@@ -28,21 +36,25 @@ class Acceptd::FileBrowserRoutes < Acceptd::RoutesBase
 
   private
 
+  def directories root
+    Dir.glob("#{root}/*").select { |f| File.directory? f }.map { |f| f.gsub("//", "/") }
+  end
+
   def process_node file
     {
         id: File.path(file),
         text: File.basename(file),
         icon: File.directory?(file) ? 'jstree-custom-folder' : 'jstree-custom-file',
         state: {
-            opened: "false",
-            disabled: "false",
-            selected: "false"
+            opened: false,
+            disabled: false,
+            selected: false
         },
         li_attr: {
             base: File.path(file),
-            isLeaf: "#{!File.directory?(file)}"
+            isLeaf: !File.directory?(file)
         },
-        children: "#{File.directory?(file)}"
+        children: File.directory?(file)
     }
   end
 end

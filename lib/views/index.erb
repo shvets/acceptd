@@ -30,17 +30,19 @@
           <div class="row">
             <div class="col-lg-3 h3">
               <label>
-                Workspace Directory
+                Project location:
               </label>
             </div>
 
-            <div class="col-md-4 tree-browser">
-              <js-tree tree-events="select_node:nodeSelected" tree-ajax="/file_browser/tree"></js-tree>
+            <div class="col-lg-6 tree-browser" style="height:200px">
+              <js-tree tree-plugins="checkbox,contextmenu"
+                       tree-events="select_node:nodeSelected;check_node:nodeChecked"
+                       tree-ajax="/file_browser/tree"></js-tree>
             </div>
 
-            <div class="col-md-8 file-viewer">
-              <pre><code>{{fileViewer}}</code></pre>
-            </div>
+            <!--<div class="col-lg-6 file-viewer">-->
+            <!--<pre><code>{{fileViewer}}</code></pre>-->
+            <!--</div>-->
 
             <div class="col-lg-6 h3">
               <input type="text" ng-model="script_params.workspace_dir" class="form-control"
@@ -50,21 +52,21 @@
           </div>
         </section>
 
-        <section class="well">
-          <div class="row">
-            <div class="col-lg-3 h3">
-              <label>
-                Project
-              </label>
-            </div>
+        <!--<section class="well">-->
+        <!--<div class="row">-->
+        <!--<div class="col-lg-3 h3">-->
+        <!--<label>-->
+        <!--Project-->
+        <!--</label>-->
+        <!--</div>-->
 
-            <div class="col-lg-6 h3">
-              <select ng-model="script_params.selected_project" class="form-control"
-                      ng-options="project for project in script_params.projects">
-              </select>
-            </div>
-          </div>
-        </section>
+        <!--<div class="col-lg-6 h3">-->
+        <!--<select ng-model="script_params.selected_project" class="form-control"-->
+        <!--ng-options="project for project in script_params.projects">-->
+        <!--</select>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</section>-->
 
         <section class="well">
           <div class="row">

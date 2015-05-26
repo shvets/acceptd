@@ -27,25 +27,47 @@
       self.configService.load_config($scope.script_params);
     });
 
-    $scope.fileViewer = 'Please select a file to view its contents';
+    //$scope.fileViewer = 'Please select a file to view its contents';
+
+    //$scope.dblClick = function (e, data) {
+    //  console.log("dblclick");
+    //
+    //  //var instance = $.jstree.reference(this),
+    //  //    node = instance.get_node(this);
+    //  //....
+    //};
+
+    $scope.nodeChecked = function () {
+      console.log("nodeChecked");
+    };
 
     $scope.nodeSelected = function (e, data) {
+
       var _l = data.node.li_attr;
-      if (_l.isLeaf) {
-        FetchFileFactory.fetchFile(_l.base).then(function (data) {
-          var _d = data.data;
-          if (typeof _d == 'object') {
-//http://stackoverflow.com/a/7220510/1015046//
-            _d = JSON.stringify(_d, undefined, 2);
-          }
-          $scope.fileViewer = _d;
-        });
-      } else {
-//http://jimhoskins.com/2012/12/17/angularjs-and-apply.html//
+
+      console.log(_l);
+
+//      var _l = data.node.li_attr;
+      if (!_l.isLeaf) {
         $scope.$apply(function () {
-          $scope.fileViewer = 'Please select a file to view its contents';
+          $scope.script_params.workspace_dir = _l.id;
         });
       }
+//      if (_l.isLeaf) {
+//        FetchFileFactory.fetchFile(_l.base).then(function (data) {
+//          var _d = data.data;
+//          if (typeof _d == 'object') {
+////http://stackoverflow.com/a/7220510/1015046//
+//            _d = JSON.stringify(_d, undefined, 2);
+//          }
+//          $scope.fileViewer = _d;
+//        });
+//      } else {
+////http://jimhoskins.com/2012/12/17/angularjs-and-apply.html//
+//        $scope.$apply(function () {
+//          $scope.fileViewer = 'Please select a file to view its contents';
+//        });
+//      }
     };
   }
 
