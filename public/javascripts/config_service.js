@@ -20,13 +20,13 @@
           script_params.selected_files = result.selected_files;
         };
 
-        $http.get(url).success(successHandler);
+        return $http.get(url).success(successHandler);
       },
 
       save_config: function (script_params) {
         var url = Settings.baseUrl + "/save_config?" + this.buildParamsQuery(script_params);
 
-        $http.get(url);
+        return $http.get(url);
       },
 
       projects: function (script_params) {

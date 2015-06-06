@@ -28,22 +28,37 @@
 
         <section class="well">
           <div class="row">
-            <div class="col-lg-3 h3">
+            <div class="col-lg-6 h3">
               <label>
                 Project location:
               </label>
             </div>
 
-            <div class="col-lg-6 tree-browser" style="height:200px">
-              <js-tree tree-plugins="checkbox,contextmenu"
-                       tree-events="select_node:nodeSelected;check_node:nodeChecked"
+            <div class="col-lg-6">
+              <hierarchical-selector load-child-items="loadAsyncData(parent)"
+                                     on-selection-changed="selectedItem = onSelectionChanged(items)"
+                                     can-select-item="selectFoldersOnly(item)">
+              </hierarchical-selector>
+            </div>
+
+            <div class="col-lg-6 tree-browser" style="height:500px">
+              <js-tree id="project_location" tree-opened="['/Users/alex']"
+                       tree-plugins="types,wholerow"
+                       tree-types="typesConfig" tree-state-key="project_location"
+                       tree-events="load_all:loadAll;select_node:nodeSelected;init:initTree;load_node:loadNode;loaded:loadedTree;ready:treeReady"
                        tree-ajax="/file_browser/tree"></js-tree>
             </div>
 
-            <!--<div class="col-lg-6 file-viewer">-->
-            <!--<pre><code>{{fileViewer}}</code></pre>-->
-            <!--</div>-->
+            <div id="project_location"></div>
 
+            <div class="col-lg-6 file-viewer">
+              <pre><code>{{fileViewer}}</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <section class="well">
+          <div class="row">
             <div class="col-lg-6 h3">
               <input type="text" ng-model="script_params.workspace_dir" class="form-control"
                      ng-change="update_projects()"

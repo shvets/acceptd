@@ -8,7 +8,7 @@ class Acceptd::FileBrowserRoutes < Acceptd::RoutesBase
     if params[:id] == "1"
       tree = []
 
-      directories(ENV['HOME']).each do |dir|
+      directories('/').each do |dir|
         tree << process_node(dir)
       end
 
@@ -21,17 +21,7 @@ class Acceptd::FileBrowserRoutes < Acceptd::RoutesBase
       end
 
       tree.to_json
-
-      tree.to_json
     end
-  end
-
-  get "/file_browser/node" do
-    content_type :json
-
-    tree = []
-
-    tree.to_json
   end
 
   private
@@ -43,8 +33,9 @@ class Acceptd::FileBrowserRoutes < Acceptd::RoutesBase
   def process_node file
     {
         id: File.path(file),
+        name: File.basename(file),
         text: File.basename(file),
-        icon: File.directory?(file) ? 'jstree-custom-folder' : 'jstree-custom-file',
+        type: File.path(file) == ENV['HOME'] ? "home_folder" : "folder",
         state: {
             opened: false,
             disabled: false,
@@ -54,7 +45,8 @@ class Acceptd::FileBrowserRoutes < Acceptd::RoutesBase
             base: File.path(file),
             isLeaf: !File.directory?(file)
         },
-        children: File.directory?(file)
+        children: File.directory?(file),
+        hasChildren: File.directory?(file)
     }
   end
 end
