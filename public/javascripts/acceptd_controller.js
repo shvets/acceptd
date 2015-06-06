@@ -24,130 +24,90 @@
     var self = this;
 
     $scope.$watch('$viewContentLoaded', function() {
-      self.configService.load_config($scope.script_params);
+      var url = '/file_browser/node';
+
+      self.configService.load_config($scope.script_params).then(function (result) {
+
+        var workspace_dir = result.data.workspace_dir;
+
+//        var files = workspace_dir.substring(1, workspace_dir.length).split("/");
+//
+//        var id = "";
+//
+//        for(var i=0; i < files.length; i++) {
+//          id += "/" + files[i];
+//
+//          console.log(id);
+//
+//          $http.get(url + '?id=' + id).success(function (data) {
+//            $scope.selection = data;
+//          });
+////
+////        //var selector = $(document.getElementById(id)).find("i");
+////
+////        //var selector = $("li[id=" + id + "] i.jstree-ocl");
+////        //
+////        //selector.click();
+////
+//        }
+
+        //var id = $scope.script_params.workspace_dir;
+        //var id = workspace_dir;
+        //var id = '/Users/alex';
+        //
+        //$http.get(url + '?id=' + id).success(function (data) {
+        //  $scope.selection = data;
+        //});
+      });
+
+      //var id = '/Users';
+      //
+      //$http.get(url + '?id=' + id).success(function (data) {
+      //  $scope.selection = data;
+      //});
+
+      //$scope.selection = {"id":"/Users/alex","name":"alex","hasChildren":true};
+      $scope.selection = [{
+        "id": "/Users/alex",
+        "name": "alex",
+        "hasChildren": true,
+        "_hsmeta": {"isExpanded": true, "isActive": true, "selected": true}
+      }]
     });
 
-    $scope.data1 = [
-      {
-        id: 0, name: 'Australia', children: [
-        {id: 0, name: 'Melbourne', children: []},
-        {id: 0, name: 'Sydney', children: []},
-        {id: 0, name: 'Kambalda', children: []}
-      ]
-      },
-      {
-        id: 1, name: 'Spain', children: [
-        {id: 0, name: 'Barcelona', children: []},
-        {id: 0, name: 'Madrid', children: []},
-        {id: 0, name: 'Benahavis', children: []}
-      ]
-      },
-      {
-        id: 2, name: 'Peru', children: [
-        {id: 0, name: 'Cusco', children: []},
-        {id: 0, name: 'Lima', children: []},
-        {id: 0, name: 'Huacachina', children: []}
-      ]
-      },
-      {
-        id: 3, name: 'UK', children: [
-        {id: 0, name: 'London', children: []},
-        {id: 0, name: 'Leeds', children: []},
-        {id: 0, name: 'Manchester', children: []}
-      ]
-      },
-      {
-        id: 4, name: 'USA', children: [
-        {id: 0, name: 'San Francisco', children: []},
-        {id: 0, name: 'New York', children: []},
-        {id: 0, name: 'San Diego', children: []}
-      ]
-      },
-      {
-        id: 5, name: 'East Africa', children: [
-        {id: 0, name: 'Kenya', children: []},
-        {id: 0, name: 'Rwanda', children: []},
-        {id: 0, name: 'Tanzania', children: []}
-      ]
-      },
-      {
-        id: 6, name: 'Japan', children: [
-        {id: 0, name: 'Tokyo', children: []},
-        {id: 0, name: 'Osaka', children: []},
-        {id: 0, name: 'Hiroshima', children: []}
-      ]
-      },
-      {
-        id: 7, name: 'Germany', children: [
-        {id: 0, name: 'Berlin', children: []},
-        {id: 0, name: 'Munich', children: []},
-        {id: 0, name: 'Frankfurt', children: []}
-      ]
-      }
-    ];
-
-    //$scope.onSelectionChanged = function(items) {
-    //  var str = '';
-    //  if (items) {
-    //    var itemNames = [];
-    //    for (var i = 0; i < items.length; i++) {
-    //      itemNames.push(items[i].name);
-    //    }
-    //
-    //    str = itemNames.join(', ');
-    //  }
-    //  return str;
-    //};
-
-    $scope.selectFoldersOnly = function (item) {
-      //if (item)
-      //  return /[12]/.test(item.name);
-      //return false;
-      return true;
+    $scope.onSelectionChanged = function (items) {
+      //$scope.selection = items;
+      //var str = '';
+      //if (items) {
+      //  var itemNames = [];
+      //  for (var i = 0; i < items.length; i++) {
+      //    itemNames.push(items[i].name);
+      //  }
+      //
+      //  str = itemNames.join(', ');
+      //}
+      //return str;
     };
 
     // Needs to return an array of items or a promise that resolves to an array of items.
     $scope.loadAsyncData = function (parent) {
       var defer = $q.defer();
 
-      //var url= 'http://jsonplaceholder.typicode.com/users';
-      var url = 'file_browser/tree';
+      var url = '/file_browser/tree';
+
+      var id;
 
       if (!parent) {
-        $http.get(url + "?id=1").success(function (data) {
-          //for (var i = 1; i < data.length -1; i++) {
-          //  data[i].hasChildren = true;
-          //}
-
-          defer.resolve(data);
-        });
+        id = '/';
       }
       else {
-        //if (parent.username) {
-        // second level
-        $http.get(url + '?id=' + parent.id).success(function (data) {
-          // make our 'model'
-          for (var i = 0; i < data.length; i++) {
-            data[i].name = 'Post: ' + data[i].title;
-            if (i < 4) {
-              data[i].hasChildren = true;
-            }
-          }
-
-          defer.resolve(data);
-        });
-        //}
-        //else if (parent.title) {
-        //  // third level
-        //  $http.get('http://jsonplaceholder.typicode.com/posts/' + parent.id + '/comments').success(function (data) {
-        //    // make our 'model'
-        //    for (var i = 0; i < data.length; i++) {
-        //      data[i].name = 'Comment: ' + data[i].name;
-        //    }
-        //    defer.resolve(data);
-        //  });
-        //}
+        id = parent.id;
       }
+
+      $http.get(url + '?id=' + id).success(function (data) {
+        console.log(data[0]);
+        defer.resolve(data);
+      });
 
       return defer.promise;
     };
