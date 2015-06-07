@@ -18,6 +18,10 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
     erb :index
   end
 
+  get '/feature_files' do
+    feature_files(params['selected_project']).to_json
+  end
+
   get '/reset_session' do
     Capybara.reset_sessions!
     #Capybara.current_session.driver.reset!
@@ -43,21 +47,40 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
 
   private
 
+  # def projects workspace_dir
+  #   projects = []
+  #
+  #   files = Dir.glob("#{workspace_dir}/*")
+  #
+  #   files.each do |file|
+  #     short_name = file[workspace_dir.size+1..-1]
+  #
+  #     if File.directory?(file)
+  #       feature_files = Dir.glob("#{file}/**/*.feature")
+  #
+  #       if File.basename(short_name) != 'support' and feature_files.size > 0
+  #         projects << short_name
+  #       end
+  #     end
+  #   end
+  #
+  #   projects
+  # end
+
   def execute_scripts params
     execute_scripts_as_cmd params
     #execute_scripts_inline params
   end
 
   def execute_scripts_as_cmd params
-    workspace_dir = params[:workspace_dir]
     selected_project = params[:selected_project]
     selected_files = params[:selected_files].split(",")
-    basedir = "#{workspace_dir}/#{selected_project}"
+    basedir = "#{selected_project}"
 
-    spec_helper_filename = generate_spec_helper workspace_dir, params
+    spec_helper_filename = generate_spec_helper params
 
     stream do |out|
-      scripts = selected_files.collect {|file| "#{workspace_dir}/#{file}"}
+      scripts = selected_files.collect { |file| "#{selected_project}/#{file}" }
 
       scripts.each do |script|
         rspec_params = "-r turnip/rspec "
@@ -85,15 +108,14 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
   end
 
   def execute_scripts_inline params
-    workspace_dir = params[:workspace_dir]
     selected_project = params[:selected_project]
     selected_files = params[:selected_files].split(",")
-    basedir = "#{workspace_dir}/#{selected_project}"
+    basedir = "#{selected_project}"
 
-    spec_helper_filename = generate_spec_helper workspace_dir, params
+    spec_helper_filename = generate_spec_helper params
 
     stream do |out|
-      scripts = selected_files.collect {|file| "#{workspace_dir}/#{file}"}
+      scripts = selected_files.collect { |file| "#{selected_project}/#{file}" }
 
       scripts.each do |script|
         rspec_params = "-r turnip/rspec "
@@ -129,7 +151,7 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
     output_stream.string
   end
 
-  def generate_spec_helper workspace_dir, params
+  def generate_spec_helper params
     template = ERB.new(File.read('lib/acceptd/spec_helper.rb.erb'))
 
     spec_helper_filename = "tmp/#{params[:selected_project]}/spec_helper.rb"
@@ -138,7 +160,6 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
 
     File.open(spec_helper_filename, "w") do |file|
       namespace = OpenStruct.new(
-          workspace_dir: workspace_dir,
           driver: params[:driver],
           browser: params[:browser],
           timeout_in_seconds: params[:timeout_in_seconds],

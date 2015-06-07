@@ -10,7 +10,6 @@
 
         var successHandler = function (result) {
           script_params.projects = result.projects;
-          script_params.workspace_dir = result.workspace_dir;
           script_params.selected_project = result.selected_project;
           script_params.webapp_url = result.webapp_url;
           script_params.timeout_in_seconds = result.timeout_in_seconds;
@@ -29,22 +28,8 @@
         return $http.get(url);
       },
 
-      projects: function (script_params) {
-        var url = Settings.baseUrl + "/projects?" + this.buildParamsQuery(script_params, ['workspace_dir']);
-
-        var successHandler = function (result) {
-          script_params.projects = result;
-
-          if (result.length > 0) {
-            script_params.selected_project = result[0];
-          }
-        };
-
-        $http.get(url).success(successHandler);
-      },
-
       feature_files: function (script_params) {
-        var url = Settings.baseUrl + "/feature_files?" + this.buildParamsQuery(script_params, ['workspace_dir', 'selected_project']);
+        var url = Settings.baseUrl + "/feature_files?" + this.buildParamsQuery(script_params, ['selected_project']);
 
         $http.get(url);
       },

@@ -1,4 +1,3 @@
-workspace_dir = "<%= workspace_dir %>"
 selected_project = "<%= selected_project %>"
 browser = "<%= browser %>"
 driver = "<%= driver %>"
@@ -7,10 +6,10 @@ timeout_in_seconds = "<%= timeout_in_seconds %>"
 require 'acceptance_test/acceptance_config'
 require 'acceptance_test/acceptance_test'
 
-ENV['CONFIG_DIR'] = "#{workspace_dir}/#{selected_project}"
-ENV['DATA_DIR'] = "#{workspace_dir}/#{selected_project}/acceptance_data"
+ENV['CONFIG_DIR'] = "#{selected_project}"
+ENV['DATA_DIR'] = "#{selected_project}/acceptance_data"
 
-AcceptanceConfig.instance.configure("#{workspace_dir}", {
+AcceptanceConfig.instance.configure("#{selected_project}", {
   app_name: selected_project,
   enable_external_source: true,
   ignore_case_in_steps: true

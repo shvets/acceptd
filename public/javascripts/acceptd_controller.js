@@ -50,11 +50,14 @@
 
     $scope.$watch('$viewContentLoaded', function () {
       self.configService.load_config($scope.script_params).success(function (result) {
-        var id = result.workspace_dir;
+        var id = result.selected_project;
 
         $http.get('/file_browser/node' + '?id=' + id).success(function (data) {
           //data["_hsmeta"] = {"isExpanded":false,"isActive":false,"selected":true};
-          $scope.selection = data;
+
+          $timeout(function () {
+            $scope.selection = data;
+          }, 0);
         });
       });
     });
@@ -62,29 +65,22 @@
     $scope.onSelectionChanged = function (items) {
       $scope.mySelection = items;
     };
-
-    // Needs to return an array of items or a promise that resolves to an array of items.
-    $scope.loadAsyncData = function (parent) {
-      var defer = $q.defer();
-
-      var url = '/file_browser/tree';
-
-      var id;
-
-      if (!parent) {
-        id = '/';
-      }
-      else {
-        id = parent.id;
-      }
-
-      $http.get(url + '?id=' + id).success(function (data) {
-        defer.resolve(data);
-      });
-
-      return defer.promise;
-    };
   }
+
+  // Needs to return an array of items or a promise that resolves to an array of items.
+  AcceptdController.prototype.loadAsyncData = function (parent) {
+    var id = parent ? parent.id : '/';
+
+    var defer = this.q.defer();
+
+    this.http.get('/file_browser/tree' + '?id=' + id).success(function (data) {
+      defer.resolve(data);
+    }).error(function (data) {
+      defer.reject(data);
+    });
+
+    return defer.promise;
+  };
 
   AcceptdController.prototype.save_config = function () {
     this.configService.save_config(this.scope.script_params);
@@ -116,7 +112,7 @@
     this.scope.running_script = true;
 
     var paramsNames = [
-      'workspace_dir', 'selected_project', 'webapp_url', 'timeout_in_seconds', 'browser', 'driver', 'selected_files'
+      'selected_project', 'webapp_url', 'timeout_in_seconds', 'browser', 'driver', 'selected_files'
     ];
 
     var url = this.settings.baseUrl + "/run?" + this.configService.buildParamsQuery(this.scope.script_params, paramsNames);
