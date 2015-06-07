@@ -36,25 +36,13 @@
 
             <div class="col-lg-6">
               {{selection}}
+              {{mySelection}}
               <hierarchical-selector load-child-items="loadAsyncData(parent)"
                                      selection="selection"
-                                     on-selection-changed="onSelectionChanged(items)">
+                                     on-selection-changed="onSelectionChanged(items)"
+                                     tag-name="tagName(item)">
               </hierarchical-selector>
             </div>
-
-            <!--<div class="col-lg-6 tree-browser" style="height:500px">-->
-            <!--<js-tree id="project_location" tree-opened="['/Users/alex']"-->
-            <!--tree-plugins="types,wholerow"-->
-            <!--tree-types="typesConfig" tree-state-key="project_location"-->
-            <!--tree-events="load_all:loadAll;select_node:nodeSelected;init:initTree;load_node:loadNode;loaded:loadedTree;ready:treeReady"-->
-            <!--tree-ajax="/file_browser/tree"></js-tree>-->
-            <!--</div>-->
-
-            <!--<div id="project_location"></div>-->
-
-            <!--<div class="col-lg-6 file-viewer">-->
-            <!--<pre><code>{{fileViewer}}</code></pre>-->
-            <!--</div>-->
           </div>
         </section>
 

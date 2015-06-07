@@ -1,7 +1,18 @@
 (function() {
   "use strict";
 
-  var app = angular.module("app", []);
+  var app = angular.module('app', ['ui.bootstrap', 'ui.router', 'hierarchical-selector']);
 
-  angular.module('app', ['ui.bootstrap', 'jsTree.directive', 'hierarchical-selector']);
+  app.config(function ($stateProvider) {
+    $stateProvider
+        .state('home', {
+          url: '/',
+          templateUrl: '/index.html',
+          controller: 'AcceptdController'
+        });
+  });
+
+  app.run(['$state', function ($state) {
+    $state.transitionTo('home');
+  }]);
 })();
