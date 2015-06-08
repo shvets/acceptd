@@ -1,58 +1,66 @@
 (function () {
   "use strict";
 
-  var namespace = angular.module("app.acceptd.config", []);
+  var namespace = angular.module('app.acceptd.config', []);
 
   namespace.factory("ConfigService", function (Settings, $http) {
-    return {
-      load_config: function (script_params) {
-        var url = Settings.baseUrl + "/load_config";
+    var self = this;
 
-        var successHandler = function (result) {
-          script_params.projects = result.projects;
-          script_params.selected_project = result.selected_project;
-          script_params.webapp_url = result.webapp_url;
-          script_params.timeout_in_seconds = result.timeout_in_seconds;
-          script_params.browser = result.browser;
-          script_params.driver = result.driver;
-          script_params.feature_files = result.feature_files;
-          script_params.selected_files = result.selected_files;
-        };
+    this.config = {};
 
-        return $http.get(url).success(successHandler);
-      },
+    this.get_config = function () {
+      return self.config;
+    };
 
-      save_config: function (script_params) {
-        var url = Settings.baseUrl + "/save_config?" + this.buildParamsQuery(script_params);
+    this.load_config = function () {
+      var url = Settings.baseUrl + "/load_config";
 
-        return $http.get(url);
-      },
+      var successHandler = function (result) {
+        self.config.projects = result.projects;
+        self.config.selected_project = result.selected_project;
+        self.config.webapp_url = result.webapp_url;
+        self.config.timeout_in_seconds = result.timeout_in_seconds;
+        self.config.browser = result.browser;
+        self.config.driver = result.driver;
+        self.config.feature_files = result.feature_files;
+        self.config.selected_files = result.selected_files;
+      };
 
-      feature_files: function (script_params) {
-        var url = Settings.baseUrl + "/feature_files?" + this.buildParamsQuery(script_params, ['selected_project']);
+      return $http.get(url).success(successHandler);
+    };
 
-        $http.get(url);
-      },
+    this.save_config = function () {
+      var url = Settings.baseUrl + "/save_config?" + this.buildParamsQuery(this.config);
 
-      buildParamsQuery: function (params, paramsNames) {
-        var paramsQuery = "";
+      return $http.get(url);
+    };
 
-        angular.forEach(params, function (value, key) {
-          var separator = (paramsQuery == "") ? "" : "&";
+    this.feature_files = function () {
+      var url = Settings.baseUrl + "/feature_files?" + this.buildParamsQuery(this.config, ['selected_project']);
 
-          if (paramsNames == undefined) {
+      $http.get(url);
+    };
+
+    this.buildParamsQuery = function (params, paramsNames) {
+      var paramsQuery = "";
+
+      angular.forEach(params, function (value, key) {
+        var separator = (paramsQuery == "") ? "" : "&";
+
+        if (paramsNames == undefined) {
+          paramsQuery += separator + key + "=" + value;
+        }
+        else {
+          if (paramsNames.indexOf(key) >= 0) {
             paramsQuery += separator + key + "=" + value;
           }
-          else {
-            if (paramsNames.indexOf(key) >= 0) {
-              paramsQuery += separator + key + "=" + value;
-            }
-          }
-        });
+        }
+      });
 
-        return paramsQuery;
-      }
+      return paramsQuery;
     };
+
+    return this;
   });
 
 })();

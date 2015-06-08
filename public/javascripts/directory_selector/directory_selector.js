@@ -1,7 +1,9 @@
 (function () {
   "use strict";
 
-  var namespace = angular.module('app.directory-selector.directory-selector', ['hierarchical-selector']);
+  var namespace = angular.module('app.directory-selector', [
+    'hierarchical-selector'
+  ]);
 
   namespace.directive("directorySelector", DirectorySelector);
 
@@ -17,7 +19,7 @@
         "selection": "&"
       },
       link: function (scope) {
-        ConfigService.load_config(scope.script_params).success(function (result) {
+        ConfigService.load_config({}).success(function (result) {
           var id = result.selected_project;
 
           $http.get('/file_browser/node' + '?id=' + id).success(function (data) {

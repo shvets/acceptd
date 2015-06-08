@@ -1,8 +1,9 @@
 (function () {
   'use strict';
 
-  var namespace = angular.module('app.directory-selector', [
-    'app.directory-selector.directory-selector'
+  angular.module('app.directory-selector', [
+    'hierarchical-selector',
+    'app.acceptd.config'
   ]);
 
 })();

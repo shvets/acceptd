@@ -1,17 +1,22 @@
 (function () {
   "use strict";
 
-  var namespace = angular.module("app.acceptd.acceptd.controllers", ['app.settings', 'app.directory-selector']);
+  var namespace = angular.module("app.acceptd.acceptd.controllers", [
+    'app.settings',
+    'app.acceptd.config',
+    'app.acceptd.progressbar'
+  ]);
 
   namespace.controller("AcceptdController", AcceptdController);
 
-  function AcceptdController($scope, $http, $q, Settings, $window, ConfigService, Progressbar) {
+  function AcceptdController($scope, $http, $q, $window, Settings, ConfigService, Progressbar) {
+    //console.log('3');
     this.scope = $scope;
     this.http = $http;
     this.q = $q;
+    this.window = $window;
 
     this.settings = Settings;
-    this.window = $window;
     this.configService = ConfigService;
     this.progressbar = Progressbar;
 
@@ -21,11 +26,13 @@
     this.scope.result = "";
     this.scope.running_script = false;
 
+    this.scope.script_params = this.configService.get_config();
+    
     //this.scope.selection = selection;
   }
 
   AcceptdController.prototype.save_config = function () {
-    this.configService.save_config(this.scope.script_params);
+    this.configService.save_config();
   };
 
   AcceptdController.prototype.navigate_to_config = function () {
@@ -57,7 +64,7 @@
       'selected_project', 'webapp_url', 'timeout_in_seconds', 'browser', 'driver', 'selected_files'
     ];
 
-    var url = this.settings.baseUrl + "/run?" + this.configService.buildParamsQuery(this.scope.script_params, paramsNames);
+    var url = this.settings.baseUrl + "/run?" + this.configService.buildParamsQuery(paramsNames);
 
     this.scope.result = "";
 
