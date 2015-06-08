@@ -29,7 +29,7 @@
           testResolve: function () {
             //console.log('1');
 
-            return "";
+            return '';
 
             // $http, ConfigService
             //var deferred = $q.defer();

@@ -1,11 +1,11 @@
 (function () {
-  "use strict";
+  'use strict';
 
   var namespace = angular.module('app.directory-selector', [
     'hierarchical-selector'
   ]);
 
-  namespace.directive("directorySelector", DirectorySelector);
+  namespace.directive('directorySelector', DirectorySelector);
 
   function DirectorySelector($q, $http, $timeout, ConfigService) {
     return {
@@ -15,15 +15,15 @@
       '                       tag-name="tagName(item)">' +
       '</hierarchical-selector>',
       scope: {
-        "script_params": "&",
-        "selection": "&"
+        'script_params': '&',
+        'selection': '&'
       },
       link: function (scope) {
         ConfigService.load_config({}).success(function (result) {
           var id = result.selected_project;
 
           $http.get('/file_browser/node' + '?id=' + id).success(function (data) {
-            //  //data["_hsmeta"] = {"isExpanded":false,"isActive":false,"selected":true};
+            //  //data['_hsmeta'] = {'isExpanded':false,'isActive':false,'selected':true};
             scope.selection = data;
           });
         });

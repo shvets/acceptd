@@ -1,9 +1,9 @@
 (function () {
-  "use strict";
+  'use strict';
 
-  var namespace = angular.module("app.settings", []);
+  var namespace = angular.module('app.settings', []);
 
-  namespace.service("Settings", Settings);
+  namespace.service('Settings', Settings);
 
   function Settings() {
     return {

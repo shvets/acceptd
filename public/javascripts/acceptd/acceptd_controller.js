@@ -1,13 +1,13 @@
 (function () {
-  "use strict";
+  'use strict';
 
-  var namespace = angular.module("app.acceptd.acceptd.controllers", [
+  var namespace = angular.module('app.acceptd.acceptd.controllers', [
     'app.settings',
     'app.acceptd.config',
     'app.acceptd.progressbar'
   ]);
 
-  namespace.controller("AcceptdController", AcceptdController);
+  namespace.controller('AcceptdController', AcceptdController);
 
   function AcceptdController($scope, $http, $q, $window, Settings, ConfigService, Progressbar) {
     //console.log('3');
@@ -23,7 +23,7 @@
     this.scope.progressbar = this.progressbar;
 
     this.scope.script_params = {};
-    this.scope.result = "";
+    this.scope.result = '';
     this.scope.running_script = false;
 
     this.scope.script_params = this.configService.get_config();
@@ -46,7 +46,7 @@
   };
 
   AcceptdController.prototype.reset_session = function() {
-    var url = this.settings.baseUrl + "/reset_session";
+    var url = this.settings.baseUrl + '/reset_session';
 
     var successHandler = function(result) {};
 
@@ -64,9 +64,9 @@
       'selected_project', 'webapp_url', 'timeout_in_seconds', 'browser', 'driver', 'selected_files'
     ];
 
-    var url = this.settings.baseUrl + "/run?" + this.configService.buildParamsQuery(paramsNames);
+    var url = this.settings.baseUrl + '/run?' + this.configService.buildParamsQuery(paramsNames);
 
-    this.scope.result = "";
+    this.scope.result = '';
 
     var addResultHandler = function(result) {
       self.scope.result += result.data;
@@ -84,11 +84,11 @@
 
     var selectedFiles = this.scope.script_params.selected_files;
 
-    if(selectedFiles.indexOf(",") == -1) {
+    if (selectedFiles.indexOf(',') == -1) {
       selectedFiles = [selectedFiles];
     }
     else {
-      selectedFiles = selectedFiles.split(",");
+      selectedFiles = selectedFiles.split(',');
     }
 
     this.progressbar.start();
@@ -96,7 +96,7 @@
     var chain = this.q.when();
 
     selectedFiles.forEach(function (selectedFile) {
-      var currentUrl = url + "&selected_files=" + selectedFile;
+      var currentUrl = url + '&selected_files=' + selectedFile;
 
       var handler = function(url) {
         return function() {

@@ -1,9 +1,9 @@
 (function () {
-  "use strict";
+  'use strict';
 
   var namespace = angular.module('app.acceptd.config', []);
 
-  namespace.factory("ConfigService", function (Settings, $http) {
+  namespace.factory('ConfigService', function (Settings, $http) {
     var self = this;
 
     this.config = {};
@@ -13,7 +13,7 @@
     };
 
     this.load_config = function () {
-      var url = Settings.baseUrl + "/load_config";
+      var url = Settings.baseUrl + '/load_config';
 
       var successHandler = function (result) {
         self.config.projects = result.projects;
@@ -30,29 +30,29 @@
     };
 
     this.save_config = function () {
-      var url = Settings.baseUrl + "/save_config?" + this.buildParamsQuery(this.config);
+      var url = Settings.baseUrl + '/save_config?' + this.buildParamsQuery(this.config);
 
       return $http.get(url);
     };
 
     this.feature_files = function () {
-      var url = Settings.baseUrl + "/feature_files?" + this.buildParamsQuery(this.config, ['selected_project']);
+      var url = Settings.baseUrl + '/feature_files?' + this.buildParamsQuery(this.config, ['selected_project']);
 
       $http.get(url);
     };
 
     this.buildParamsQuery = function (params, paramsNames) {
-      var paramsQuery = "";
+      var paramsQuery = '';
 
       angular.forEach(params, function (value, key) {
-        var separator = (paramsQuery == "") ? "" : "&";
+        var separator = (paramsQuery == '') ? '' : '&';
 
         if (paramsNames == undefined) {
-          paramsQuery += separator + key + "=" + value;
+          paramsQuery += separator + key + '=' + value;
         }
         else {
           if (paramsNames.indexOf(key) >= 0) {
-            paramsQuery += separator + key + "=" + value;
+            paramsQuery += separator + key + '=' + value;
           }
         }
       });

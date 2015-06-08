@@ -1,9 +1,9 @@
 (function () {
-  "use strict";
+  'use strict';
 
-  var namespace = angular.module("app.acceptd.config.controllers", []);
+  var namespace = angular.module('app.acceptd.config.controllers', []);
 
-  namespace.controller("ConfigController", ConfigController);
+  namespace.controller('ConfigController', ConfigController);
 
   function ConfigController($scope, $http, $q, $window, ConfigService) {
     this.scope = $scope;
@@ -14,7 +14,7 @@
     this.configService = ConfigService;
 
     this.scope.script_params = {};
-    this.scope.result = "";
+    this.scope.result = '';
 
     var self = this;
 
