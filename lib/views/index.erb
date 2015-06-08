@@ -35,14 +35,18 @@
             </div>
 
             <div class="col-lg-6">
-              {{selection}}
-              {{mySelection}}
-              <hierarchical-selector load-child-items="acceptdCtrl.loadAsyncData(parent)"
-                                     selection="selection"
-                                     on-selection-changed="onSelectionChanged(items)"
-                                     tag-name="tagName(item)">
-              </hierarchical-selector>
+              <directory-selector></directory-selector>
             </div>
+
+            <!--<div class="col-lg-6">-->
+            <!--{{selection}}-->
+            <!--{{mySelection}}-->
+            <!--<hierarchical-selector load-child-items="acceptdCtrl.loadAsyncData(parent)"-->
+            <!--selection="selection"-->
+            <!--on-selection-changed="onSelectionChanged(items)"-->
+            <!--tag-name="tagName(item)">-->
+            <!--</hierarchical-selector>-->
+            <!--</div>-->
           </div>
         </section>
 

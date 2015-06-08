@@ -15,6 +15,7 @@
   ],
   "dependencies": {
     "angular": "~1.3.15",
+    "jquery": "",
     "angular-bootstrap": "~0.13.0",
     "angular-ui-router": "~0.2.14",
     "NgHierarchicalSelector": "~0.3.4"

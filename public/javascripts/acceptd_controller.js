@@ -5,7 +5,7 @@
 
   namespace.controller("AcceptdController", AcceptdController);
 
-  function AcceptdController($scope, $http, $q, $timeout, Settings, $window, ConfigService, Progressbar) {
+  function AcceptdController($scope, $http, $q, Settings, $window, ConfigService, Progressbar) {
     this.scope = $scope;
     this.http = $http;
     this.q = $q;
@@ -21,66 +21,8 @@
     this.scope.result = "";
     this.scope.running_script = false;
 
-    var self = this;
-
-    $scope.tagName = function (item) {
-      return item.id;
-    };
-
-    $scope.testa = function () {
-      //angular.element(document.body).injector().get('AcceptdController')
-
-      var root = $('.hierarchical-control');
-      var root_input = $('.hierarchical-input');
-      var tree_view = root.find('.tree-view');
-
-      root_input.click();
-
-      var items = tree_view.find('ul li');
-
-      for (var i = 0; i < items.size(); i++) {
-        var item = items[0];
-        console.log(item);
-        var el1 = $(item).find('.item-container span')[0];
-        el1.click();
-        var item2 = item.find('ul li');
-        var el2 = item2.find('.item-container span')[0];
-      }
-    };
-
-    $scope.$watch('$viewContentLoaded', function () {
-      self.configService.load_config($scope.script_params).success(function (result) {
-        var id = result.selected_project;
-
-        $http.get('/file_browser/node' + '?id=' + id).success(function (data) {
-          //data["_hsmeta"] = {"isExpanded":false,"isActive":false,"selected":true};
-
-          $timeout(function () {
-            $scope.selection = data;
-          }, 0);
-        });
-      });
-    });
-
-    $scope.onSelectionChanged = function (items) {
-      $scope.mySelection = items;
-    };
+    //this.scope.selection = selection;
   }
-
-  // Needs to return an array of items or a promise that resolves to an array of items.
-  AcceptdController.prototype.loadAsyncData = function (parent) {
-    var id = parent ? parent.id : '/';
-
-    var defer = this.q.defer();
-
-    this.http.get('/file_browser/tree' + '?id=' + id).success(function (data) {
-      defer.resolve(data);
-    }).error(function (data) {
-      defer.reject(data);
-    });
-
-    return defer.promise;
-  };
 
   AcceptdController.prototype.save_config = function () {
     this.configService.save_config(this.scope.script_params);
