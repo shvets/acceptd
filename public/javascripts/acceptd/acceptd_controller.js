@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  var namespace = angular.module("app");
+  var namespace = angular.module("app.acceptd.acceptd.controllers", ['app.settings', 'app.directory-selector']);
 
   namespace.controller("AcceptdController", AcceptdController);
 

@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  var namespace = angular.module("app");
+  var namespace = angular.module("app.acceptd.stream-service", []);
 
   namespace.factory('StreamService', function($http, Progressbar) {
     return {

@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var namespace = angular.module("app");
+  var namespace = angular.module("app.acceptd.fetch-file", []);
 
   namespace.factory('FetchFileFactory', function ($http) {
     var factory = {};

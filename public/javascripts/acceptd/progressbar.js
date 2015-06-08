@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  var namespace = angular.module("app");
+  var namespace = angular.module("app.acceptd.progressbar", []);
 
   namespace.factory('Progressbar', function($interval) {
     var control = {};

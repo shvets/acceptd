@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  var namespace = angular.module("app");
+  var namespace = angular.module('app.directory-selector.directory-selector', ['hierarchical-selector']);
 
   namespace.directive("directorySelector", DirectorySelector);
 
