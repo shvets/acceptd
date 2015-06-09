@@ -4,13 +4,13 @@
   var namespace = angular.module('app.acceptd.acceptd.controllers', [
     'app.settings',
     'app.acceptd.config',
-    'app.acceptd.progressbar'
+    'app.acceptd.progressbar',
+    'app.directory-selector'
   ]);
 
   namespace.controller('AcceptdController', AcceptdController);
 
   function AcceptdController($scope, $http, $q, $window, Settings, ConfigService, Progressbar) {
-    //console.log('3');
     this.scope = $scope;
     this.http = $http;
     this.q = $q;
@@ -26,7 +26,9 @@
     this.scope.result = '';
     this.scope.running_script = false;
 
-    this.scope.script_params = this.configService.get_config();
+    this.configService.load_config().then(function (result) {
+      $scope.script_params = result.data;
+    });
     
     //this.scope.selection = selection;
   }

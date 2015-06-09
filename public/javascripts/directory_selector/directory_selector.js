@@ -2,7 +2,8 @@
   'use strict';
 
   var namespace = angular.module('app.directory-selector', [
-    'hierarchical-selector'
+    'hierarchical-selector',
+    'app.acceptd.config'
   ]);
 
   namespace.directive('directorySelector', DirectorySelector);
