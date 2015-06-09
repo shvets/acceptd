@@ -21,6 +21,8 @@
         'selected_project': '&'
       },
       link: function (scope, element, attributes) {
+        //console.log(attributes.selectedProject);
+
         ConfigService.load_config({}).success(function (result) {
           var id = result.selected_project;
           //var id = attributes.selectedProject;

@@ -19,12 +19,6 @@
       return $http.get(url);
     };
 
-    this.feature_files = function (config) {
-      var url = Settings.baseUrl + '/feature_files?' + this.buildParamsQuery(config, ['selected_project']);
-
-      $http.get(url);
-    };
-
     this.buildParamsQuery = function (params, paramsNames) {
       var paramsQuery = '';
 

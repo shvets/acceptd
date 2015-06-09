@@ -11,6 +11,8 @@
   namespace.controller('AcceptdController', AcceptdController);
 
   function AcceptdController($scope, $http, $q, $window, Settings, ConfigService, Progressbar) {
+    var self = this;
+
     this.scope = $scope;
     this.http = $http;
     this.q = $q;
@@ -26,12 +28,10 @@
     this.scope.result = '';
     this.scope.running_script = false;
 
-    this.configService.load_config().success(function (params) {
-      $scope.script_params = params;
+    this.configService.load_config().success(function (config) {
+      $scope.script_params = config;
 
-      var url = Settings.baseUrl + '/feature_files?' + ConfigService.buildParamsQuery(params, ['selected_project']);
-
-      $http.get(url).success(function (feature_files) {
+      self.feature_files().success(function (feature_files) {
         $scope.feature_files = feature_files;
       });
     });
@@ -44,7 +44,6 @@
   }
 
   AcceptdController.prototype.feature_files = function () {
-    //var params = this.configService.get_config();
     var params = this.scope.script_params;
 
     var url = this.settings.baseUrl + '/feature_files?' + this.configService.buildParamsQuery(params, ['selected_project']);
