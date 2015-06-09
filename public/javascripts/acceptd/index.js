@@ -23,7 +23,7 @@
         }
         })
         .state('config', {
-          url: '/config',
+          url: '/config.html',
           templateUrl: '/config.html',
           controller: 'ConfigController'
       });

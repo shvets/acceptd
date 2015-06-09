@@ -17,11 +17,13 @@
       '</hierarchical-selector>',
       scope: {
         'script_params': '&',
-        'selection': '&'
+        'selection': '&',
+        'selected_project': '&'
       },
-      link: function (scope) {
+      link: function (scope, element, attributes) {
         ConfigService.load_config({}).success(function (result) {
           var id = result.selected_project;
+          //var id = attributes.selectedProject;
 
           $http.get('/file_browser/node' + '?id=' + id).success(function (data) {
             //  //data['_hsmeta'] = {'isExpanded':false,'isActive':false,'selected':true};

@@ -18,9 +18,6 @@
     this.scope.script_params = {};
     this.scope.result = '';
 
-    //$scope.$watch('$viewContentLoaded', function () {
-    //});
-
     ConfigService.load_config().then(function (result) {
       $scope.script_params = result.data;
     });

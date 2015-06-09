@@ -31,10 +31,13 @@
     });
     
     //this.scope.selection = selection;
+
+    this.scope.$watch('$viewContentLoaded', function () {
+    });
   }
 
   AcceptdController.prototype.save_config = function () {
-    this.configService.save_config();
+    this.configService.save_config(this.scope.script_params);
   };
 
   AcceptdController.prototype.navigate_to_config = function () {
@@ -62,12 +65,6 @@
 
     this.scope.running_script = true;
 
-    var paramsNames = [
-      'selected_project', 'webapp_url', 'timeout_in_seconds', 'browser', 'driver', 'selected_files'
-    ];
-
-    var url = this.settings.baseUrl + '/run?' + this.configService.buildParamsQuery(paramsNames);
-
     this.scope.result = '';
 
     var addResultHandler = function(result) {
@@ -92,6 +89,12 @@
     else {
       selectedFiles = selectedFiles.split(',');
     }
+
+    var paramsNames = [
+      'selected_project', 'webapp_url', 'timeout_in_seconds', 'browser', 'driver', 'selected_files'
+    ];
+
+    var url = this.settings.baseUrl + '/run?' + this.configService.buildParamsQuery(paramsNames);
 
     this.progressbar.start();
 
