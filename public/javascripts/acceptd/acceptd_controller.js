@@ -26,15 +26,31 @@
     this.scope.result = '';
     this.scope.running_script = false;
 
-    this.configService.load_config().then(function (result) {
-      $scope.script_params = result.data;
+    this.configService.load_config().success(function (params) {
+      $scope.script_params = params;
+
+      var url = Settings.baseUrl + '/feature_files?' + ConfigService.buildParamsQuery(params, ['selected_project']);
+
+      $http.get(url).success(function (feature_files) {
+        $scope.feature_files = feature_files;
+      });
     });
-    
+
     //this.scope.selection = selection;
 
     this.scope.$watch('$viewContentLoaded', function () {
+
     });
   }
+
+  AcceptdController.prototype.feature_files = function () {
+    //var params = this.configService.get_config();
+    var params = this.scope.script_params;
+
+    var url = this.settings.baseUrl + '/feature_files?' + this.configService.buildParamsQuery(params, ['selected_project']);
+
+    return this.http.get(url);
+  };
 
   AcceptdController.prototype.save_config = function () {
     this.configService.save_config(this.scope.script_params);

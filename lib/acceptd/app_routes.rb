@@ -47,6 +47,16 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
 
   private
 
+  def feature_files project
+    files = Dir.glob("#{project}/**/*.feature")
+
+    files.each_with_index do |file, index|
+      files[index] = file[project.size+1..-1]
+    end
+
+    files
+  end
+
   # def projects workspace_dir
   #   projects = []
   #

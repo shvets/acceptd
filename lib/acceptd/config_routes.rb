@@ -41,8 +41,6 @@ class Acceptd::ConfigRoutes < Acceptd::RoutesBase
       config['selected_files'] = []
     end
 
-    config['feature_files'] = feature_files(config['selected_project'])
-
     config
   end
 
@@ -50,16 +48,6 @@ class Acceptd::ConfigRoutes < Acceptd::RoutesBase
 
   def save_config file_name, config
     File.open(file_name, 'w') { |file| file.write config.to_yaml }
-  end
-
-  def feature_files project
-    files = Dir.glob("#{project}/**/*.feature")
-
-    files.each_with_index do |file, index|
-      files[index] = file[project.size+1..-1]
-    end
-
-    files
   end
 
 end
