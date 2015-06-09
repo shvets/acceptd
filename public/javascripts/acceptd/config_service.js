@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var namespace = angular.module('app.acceptd.config', []);
+  var namespace = angular.module('app.acceptd.config', ['app.settings']);
 
   namespace.factory('ConfigService', function (Settings, $http) {
     var self = this;
@@ -16,7 +16,6 @@
       var url = Settings.baseUrl + '/load_config';
 
       var successHandler = function (result) {
-        self.config.projects = result.projects;
         self.config.selected_project = result.selected_project;
         self.config.webapp_url = result.webapp_url;
         self.config.timeout_in_seconds = result.timeout_in_seconds;

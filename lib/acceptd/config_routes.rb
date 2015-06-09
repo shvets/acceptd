@@ -9,8 +9,7 @@ require 'erb'
 
 class Acceptd::ConfigRoutes < Acceptd::RoutesBase
   ACCEPTD_ROOT_DIR = File.expand_path(".")
-  ACCEPTD_CONFIG_FILE_NAME = "#{ACCEPTD_ROOT_DIR}/.acceptd.yaml"
-  WORKSPACE_DIR = 'workspace'
+  ACCEPTD_CONFIG_FILE_NAME = "#{ENV['HOME']}/.acceptd.yaml"
 
   get '/config' do
     erb :config
@@ -38,7 +37,7 @@ class Acceptd::ConfigRoutes < Acceptd::RoutesBase
       config['browser'] = "firefox"
       config['driver'] = "selenium"
 
-      config['selected_project'] = ACCEPTD_ROOT_DIR + "/" + WORKSPACE_DIR
+      config['selected_project'] = ACCEPTD_ROOT_DIR
       config['selected_files'] = []
     end
 
