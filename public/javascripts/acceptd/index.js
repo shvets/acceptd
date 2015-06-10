@@ -37,12 +37,12 @@
 
 //console.log('1');
 
-// $http, ConfigService
+// $http, AcceptdService
 //var deferred = $q.defer();
 //
 ////$timeout(function(){
-//  ConfigService.load_config({}).success(function (result) {
-//  //var result = ConfigService.get_config();
+//  AcceptdService.load_config({}).success(function (result) {
+//  //var result = AcceptdService.get_config();
 //
 //    var id = result.selected_project;
 //

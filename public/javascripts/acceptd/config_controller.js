@@ -7,24 +7,24 @@
 
   namespace.controller('ConfigController', ConfigController);
 
-  function ConfigController($scope, $http, $q, $window, ConfigService) {
+  function ConfigController($scope, $http, $q, $window, AcceptdService) {
     this.scope = $scope;
     this.http = $http;
     this.q = $q;
 
     this.window = $window;
-    this.configService = ConfigService;
+    this.acceptdService = AcceptdService;
 
     this.scope.script_params = {};
     this.scope.result = '';
 
-    ConfigService.load_config().then(function (result) {
+    AcceptdService.load_config().then(function (result) {
       $scope.script_params = result.data;
     });
   }
 
   ConfigController.prototype.save_and_navigate_to_home = function () {
-    this.configService.save_config(this.scope.script_params);
+    this.acceptdService.save_config(this.scope.script_params);
 
     this.window.location = '/';
   };

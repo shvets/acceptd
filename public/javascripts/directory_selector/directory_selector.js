@@ -8,7 +8,7 @@
 
   namespace.directive('directorySelector', DirectorySelector);
 
-  function DirectorySelector($q, $http, $timeout, ConfigService) {
+  function DirectorySelector($q, $http, $timeout, AcceptdService) {
     return {
       restrict: 'AE',
       template: '<hierarchical-selector load-child-items="loadAsyncData(parent)"' +
@@ -23,7 +23,7 @@
       link: function (scope, element, attributes) {
         //console.log(attributes.selectedProject);
 
-        ConfigService.load_config({}).success(function (result) {
+        AcceptdService.load_config({}).success(function (result) {
           var id = result.selected_project;
           //var id = attributes.selectedProject;
 

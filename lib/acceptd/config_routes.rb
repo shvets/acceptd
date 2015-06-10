@@ -34,7 +34,7 @@ class Acceptd::ConfigRoutes < Acceptd::RoutesBase
       config['webapp_url'] = "http://localhost:4567"
 
       config['timeout_in_seconds'] = "10"
-      config['browser'] = "firefox"
+      config['browser'] = "chrome"
       config['driver'] = "selenium"
 
       config['selected_project'] = ACCEPTD_ROOT_DIR

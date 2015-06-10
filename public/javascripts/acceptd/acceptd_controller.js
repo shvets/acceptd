@@ -10,7 +10,7 @@
 
   namespace.controller('AcceptdController', AcceptdController);
 
-  function AcceptdController($scope, $http, $q, $window, Settings, ConfigService, Progressbar) {
+  function AcceptdController($scope, $http, $q, $window, Settings, AcceptdService, Progressbar) {
     var self = this;
 
     this.scope = $scope;
@@ -19,7 +19,7 @@
     this.window = $window;
 
     this.settings = Settings;
-    this.configService = ConfigService;
+    this.acceptdService = AcceptdService;
     this.progressbar = Progressbar;
 
     this.scope.progressbar = this.progressbar;
@@ -28,10 +28,10 @@
     this.scope.result = '';
     this.scope.running_script = false;
 
-    this.configService.load_config().success(function (config) {
+    this.acceptdService.load_config().success(function (config) {
       $scope.script_params = config;
 
-      self.feature_files().success(function (feature_files) {
+      self.acceptdService.feature_files(config).success(function (feature_files) {
         $scope.feature_files = feature_files;
       });
     });
@@ -43,16 +43,8 @@
     });
   }
 
-  AcceptdController.prototype.feature_files = function () {
-    var params = this.scope.script_params;
-
-    var url = this.settings.baseUrl + '/feature_files?' + this.configService.buildParamsQuery(params, ['selected_project']);
-
-    return this.http.get(url);
-  };
-
   AcceptdController.prototype.save_config = function () {
-    this.configService.save_config(this.scope.script_params);
+    this.acceptdService.save_config(this.scope.script_params);
   };
 
   AcceptdController.prototype.navigate_to_config = function () {
@@ -82,52 +74,25 @@
 
     this.scope.result = '';
 
-    var addResultHandler = function(result) {
+    var onSuccess = function (result) {
       self.scope.result += result.data;
     };
 
-    var errorHandler = function(result) {
+    var onError = function (result) {
       self.scope.result += result.data;
 
       self.progressbar.error();
     };
 
-    var completeHandler = function() {
+    var onComplete = function () {
       self.progressbar.stop();
     };
 
     var selectedFiles = this.scope.script_params.selected_files;
 
-    if (selectedFiles.indexOf(',') == -1) {
-      selectedFiles = [selectedFiles];
-    }
-    else {
-      selectedFiles = selectedFiles.split(',');
-    }
-
-    var paramsNames = [
-      'selected_project', 'webapp_url', 'timeout_in_seconds', 'browser', 'driver', 'selected_files'
-    ];
-
-    var url = this.settings.baseUrl + '/run?' + this.configService.buildParamsQuery(paramsNames);
-
     this.progressbar.start();
 
-    var chain = this.q.when();
-
-    selectedFiles.forEach(function (selectedFile) {
-      var currentUrl = url + '&selected_files=' + selectedFile;
-
-      var handler = function(url) {
-        return function() {
-          return self.http.get(url).then(addResultHandler, errorHandler);
-        };
-      };
-
-      chain = chain.then(handler(currentUrl));
-    });
-
-    chain.then(completeHandler);
+    self.acceptdService.run_tests(selectedFiles, this.scope.script_params, onSuccess, onError, onComplete);
   };
 
 })();
