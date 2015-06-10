@@ -3,12 +3,13 @@
 
   var namespace = angular.module('app.directory-selector', [
     'hierarchical-selector',
+    'app.settings',
     'app.acceptd.config'
   ]);
 
   namespace.directive('directorySelector', DirectorySelector);
 
-  function DirectorySelector($q, $http, $timeout, AcceptdService) {
+  function DirectorySelector($q, $http, $timeout, Settings, AcceptdService) {
     return {
       restrict: 'AE',
       template: '<hierarchical-selector load-child-items="loadAsyncData(parent)"' +
@@ -17,17 +18,14 @@
       '</hierarchical-selector>',
       scope: {
         'script_params': '&',
-        'selection': '&',
-        'selected_project': '&'
+        'selection': '&'
       },
       link: function (scope, element, attributes) {
-        //console.log(attributes.selectedProject);
-
         AcceptdService.load_config({}).success(function (result) {
           var id = result.selected_project;
           //var id = attributes.selectedProject;
 
-          $http.get('/file_browser/node' + '?id=' + id).success(function (data) {
+          $http.get(Settings.baseUrl + '/file_browser/node' + '?id=' + id).success(function (data) {
             //  //data['_hsmeta'] = {'isExpanded':false,'isActive':false,'selected':true};
             scope.selection = data;
           });
