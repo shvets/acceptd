@@ -22,7 +22,6 @@
           var id = args.selected_project;
 
           $http.get(Settings.baseUrl + '/file_browser/node' + '?id=' + id).success(function (data) {
-            //  //data['_hsmeta'] = {'isExpanded':false,'isActive':false,'selected':true};
             scope.selection = data;
           });
         });
@@ -54,28 +53,4 @@
 
 })();
 
-//$scope.testa = function () {
-//  //angular.element(document.body).injector().get('AcceptdController')
-//
-//  //var root = angular.element(document.querySelector('.hierarchical-control'));
-//  //var root_input = angular.element(document.querySelector('.hierarchical-input'));
-//  //var tree_view = angular.element(document.querySelector('.tree-view'))
-//
-//  var root = $('.hierarchical-control');
-//  var root_input = $('.hierarchical-input');
-//  var tree_view = root.find('.tree-view');
-//
-//  root_input.click();
-//
-//  var items = tree_view.find('ul li');
-//
-//  for (var i = 0; i < items.size(); i++) {
-//    var item = items[0];
-//    console.log(item);
-//    var el1 = $(item).find('.item-container span')[0];
-//    el1.click();
-//    var item2 = item.find('ul li');
-//    var el2 = item2.find('.item-container span')[0];
-//  }
-//};
 

@@ -40,6 +40,61 @@
 
     this.scope.$watch('$viewContentLoaded', function () {
     });
+
+    var index = 0;
+    var hasRegistered = false;
+
+    $scope.$watch(function () {
+      if (hasRegistered) return;
+      hasRegistered = true;
+      // Note that we're using a private Angular method here (for now)
+      $scope.$$postDigest(function (r) {
+        hasRegistered = false;
+
+        index += 1;
+
+        if (index == 5) {
+          console.log($scope.script_params.selected_project);
+
+          var root = angular.element(document.querySelector('.hierarchical-control'));
+          var root_input = angular.element(document.querySelector('.hierarchical-input'));
+          var tree_view = angular.element(document.querySelector('.tree-view'));
+
+          console.log(root_input);
+
+          root_input.click();
+
+          var items = tree_view.find('ul li');
+
+          for (var i = 0; i < items.size(); i++) {
+            var item = items[i];
+            var name = $(item).text().trim();
+
+            //console.log($(item).text().trim());
+
+            ///html/body/div/div/form/div/section[2]/div/div[2]/directory-selector/div/div[2]/ul/li[16]/div/span
+            ///html/body/div/div/form/div/section[2]/div/div[2]/directory-selector/div/div[2]/ul/li[16]/ul[1]/li/div
+
+            if (name == 'Users') {
+              console.log(name);
+
+              var el = angular.element(item).find('.item-container span')[0];
+
+              console.log(el);
+
+              el.click();
+
+              var item2 = angular.element(item).find('.item-container ul li div span');
+
+              //console.log(item2);
+
+              //var el2 = item2.find('.item-container span')[0];
+              //el2.click();
+            }
+          }
+        }
+      });
+    });
   }
 
   AcceptdController.prototype.save_config = function () {
