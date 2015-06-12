@@ -9,21 +9,17 @@
 
   namespace.directive('directorySelector', DirectorySelector);
 
-  function DirectorySelector($q, $http, $timeout, Settings, AcceptdService) {
+  function DirectorySelector($q, $http, $rootScope, $timeout, Settings, AcceptdService) {
     return {
       restrict: 'AE',
       template: '<hierarchical-selector load-child-items="loadAsyncData(parent)"' +
       '                       selection="selection" on-selection-changed="onSelectionChanged(items)"' +
       '                       tag-name="tagName(item)">' +
       '</hierarchical-selector>',
-      scope: {
-        'script_params': '&',
-        'selection': '&'
-      },
+
       link: function (scope, element, attributes) {
-        AcceptdService.load_config({}).success(function (result) {
-          var id = result.selected_project;
-          //var id = attributes.selectedProject;
+        $rootScope.$on('selected_project', function (events, args) {
+          var id = args.selected_project;
 
           $http.get(Settings.baseUrl + '/file_browser/node' + '?id=' + id).success(function (data) {
             //  //data['_hsmeta'] = {'isExpanded':false,'isActive':false,'selected':true};

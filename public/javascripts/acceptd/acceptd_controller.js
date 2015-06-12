@@ -39,7 +39,6 @@
     //this.scope.selection = selection;
 
     this.scope.$watch('$viewContentLoaded', function () {
-
     });
   }
 

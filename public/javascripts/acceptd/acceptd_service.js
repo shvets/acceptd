@@ -5,12 +5,13 @@
     'app.settings'
   ]);
 
-  namespace.factory('AcceptdService', function ($http, $q, Settings) {
-
+  namespace.factory('AcceptdService', function ($http, $q, $rootScope, Settings) {
     this.load_config = function () {
       var url = Settings.baseUrl + '/load_config';
 
-      return $http.get(url);
+      return $http.get(url).success(function (config) {
+        $rootScope.$broadcast('selected_project', {selected_project: config.selected_project});
+      });
     };
 
     this.save_config = function (config) {

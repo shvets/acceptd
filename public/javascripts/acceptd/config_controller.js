@@ -18,8 +18,8 @@
     this.scope.script_params = {};
     this.scope.result = '';
 
-    AcceptdService.load_config().then(function (result) {
-      $scope.script_params = result.data;
+    AcceptdService.load_config().success(function (params) {
+      $scope.script_params = params;
     });
   }
 
