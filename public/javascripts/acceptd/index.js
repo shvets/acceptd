@@ -15,12 +15,7 @@
       .state('home', {
         url: '/',
         templateUrl: '/index.html',
-        controller: 'AcceptdController',
-        resolve: {
-          testResolve: function () {
-            console.log(testResolve);
-          }
-        }
+          controller: 'AcceptdController'
         })
         .state('config', {
           url: '/config.html',
@@ -34,22 +29,3 @@
   });
 
 })();
-
-//console.log('1');
-
-// $http, AcceptdService
-//var deferred = $q.defer();
-//
-////$timeout(function(){
-//  AcceptdService.load_config({}).success(function (result) {
-//  //var result = AcceptdService.get_config();
-//
-//    var id = result.selected_project;
-//
-//    $http.get('/file_browser/node' + '?id=' + id).success(function (data) {
-//      deferred.resolve(data);
-//    });
-//  });
-////}, 0);
-//
-//return deferred.promise;

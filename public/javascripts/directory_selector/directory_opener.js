@@ -3,11 +3,12 @@
 
   var namespace = angular.module('app.directory-opener', []);
 
-  namespace.service('DirectoryOpener', DirectoryOpener);
+  namespace.factory('DirectoryOpener', DirectoryOpener);
 
-  function DirectoryOpener($rootScope, $timeout) {
-    function click_first_node(selected_project) {
-      var root_input = angular.element(document.querySelector('.hierarchical-control .hierarchical-input'));
+  function DirectoryOpener($timeout) {
+
+    function click_first_node(element, selected_project) {
+      var root_input = element.find('.hierarchical-control .hierarchical-input');
 
       root_input.triggerHandler('click');
 
@@ -43,11 +44,13 @@
             lastNode = list[i];
           }
 
-          handlers.push(function () {
+          var handler = function () {
             var children = node.find('ul li');
 
             click_next_node(children, names, index + 1);
-          });
+          };
+
+          handlers.push(handler);
         }
       }
 
@@ -66,27 +69,29 @@
       angular.element('body').get(0).scrollIntoView();
     }
 
-    this.open_selected_project = function (pos, selected_project) {
+    this.open_selected_project = function (scope, element, pos, selected_project) {
       var index = 0;
       var hasRegistered = false;
 
-      $rootScope.$watch(function () {
+      scope.$watch(function () {
         if (!hasRegistered) {
           hasRegistered = true;
 
           // Note that we're using a private Angular method here (for now)
-          $rootScope.$$postDigest(function () {
+          scope.$$postDigest(function () {
             hasRegistered = false;
 
             index += 1;
 
             if (index == pos) {
-              click_first_node(selected_project());
+              click_first_node(element, selected_project());
             }
           });
         }
       });
-    }
+    };
+
+    return this;
   }
 
 })();
