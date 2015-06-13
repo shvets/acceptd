@@ -4,19 +4,20 @@
   var namespace = angular.module('app.directory-selector', [
     'hierarchical-selector',
     'app.settings',
-    'app.acceptd.config'
+    'app.acceptd.config',
+    'app.directory-opener'
   ]);
 
   namespace.directive('directorySelector', DirectorySelector);
 
-  function DirectorySelector($q, $http, $rootScope, $timeout, Settings, AcceptdService) {
+  function DirectorySelector($q, $http, $rootScope, Settings, DirectoryOpener) {
     return {
       restrict: 'AE',
       template: '<hierarchical-selector load-child-items="loadAsyncData(parent)"' +
       '                       selection="selection" on-selection-changed="onSelectionChanged(items)"' +
       '                       tag-name="tagName(item)">' +
       '</hierarchical-selector>',
-      link: function (scope, element, attributes) {
+      link: function (scope) {
         $rootScope.$on('selected_project', function (events, args) {
           var id = args.selected_project;
 
@@ -46,6 +47,11 @@
         scope.tagName = function (item) {
           return item.id;
         };
+      },
+      controller: function ($scope) {
+        DirectoryOpener.open_selected_project(5, function () {
+          return $scope.script_params.selected_project;
+        });
       }
     }
   }

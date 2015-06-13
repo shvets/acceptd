@@ -10,7 +10,7 @@
 
   namespace.controller('AcceptdController', AcceptdController);
 
-  function AcceptdController($scope, $http, $q, $window, $timeout, Settings, AcceptdService, Progressbar) {
+  function AcceptdController($scope, $http, $q, $window, Settings, AcceptdService, Progressbar) {
     var self = this;
 
     this.scope = $scope;
@@ -37,55 +37,7 @@
     });
 
     this.scope.$watch('$viewContentLoaded', function () {
-    });
 
-    function click_on_node(node, names, index, last) {
-      var itemContainer = $(node).find('.item-container');
-
-      var list = $(itemContainer).find('.item-details');
-
-      for (var i = 0; i < list.size(); i++) {
-        var name = $(list[i]).text().trim();
-
-        if (name == names[index]) {
-          var el = $(list[i]).siblings()[0];
-
-          el.click();
-
-          $(list[i]).addClass('selected');
-
-          $timeout(function () {
-            if (!last) {
-              click_on_node(node.find('ul li'), names, index + 1, index === names.length - 1);
-            }
-          }, 50);
-        }
-      }
-    }
-
-    var index = 0;
-    var hasRegistered = false;
-
-    $scope.$watch(function () {
-      if (hasRegistered) return;
-      hasRegistered = true;
-      // Note that we're using a private Angular method here (for now)
-      $scope.$$postDigest(function (r) {
-        hasRegistered = false;
-
-        index += 1;
-
-        if (index == 5) {
-          var root_input = angular.element(document.querySelector('.hierarchical-control .hierarchical-input'));
-
-          root_input.click();
-
-          var tree_view = angular.element(document.querySelector('.hierarchical-control .tree-view'));
-          var top_level = $(tree_view).find('.top-level');
-
-          click_on_node(top_level, $scope.script_params.selected_project.split('/').slice(1, 10), 0, false);
-        }
-      });
     });
   }
 
