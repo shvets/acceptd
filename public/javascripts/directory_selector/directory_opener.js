@@ -9,47 +9,61 @@
     function click_first_node(selected_project) {
       var root_input = angular.element(document.querySelector('.hierarchical-control .hierarchical-input'));
 
-      root_input.click();
+      root_input.triggerHandler('click');
 
       var tree_view = angular.element(document.querySelector('.hierarchical-control .tree-view'));
       var top_level = tree_view.find('.top-level');
 
-      click_next_node(top_level, selected_project.split('/').slice(1, 10), 0, false);
+      var names = selected_project.split('/');
+
+      click_next_node(top_level, names.slice(1, names.length), 0, names.length === 0);
     }
 
-    function click_next_node(node, names, index, last) {
+    function click_next_node(node, names, index) {
+      var last = index === names.length - 1;
+
       var lastNode = null;
+      var handlers = [];
 
       var itemContainer = node.find('.item-container');
 
       var list = itemContainer.find('.item-details');
 
       for (var i = 0; i < list.size(); i++) {
-        var name = $(list[i]).text().trim();
+        var element = angular.element(list[i]);
+
+        var name = element.text().trim();
 
         if (name == names[index]) {
-          var el = $(list[i]).siblings()[0];
+          var expando = element.parent().children()[0];
 
-          el.click();
+          angular.element(expando).triggerHandler('click');
 
           if (last) {
             lastNode = list[i];
           }
 
-          $timeout(function () {
-            click_next_node(node.find('ul li'), names, index + 1, index === names.length - 2);
-          }, 30);
+          handlers.push(function () {
+            var children = node.find('ul li');
+
+            click_next_node(children, names, index + 1);
+          });
         }
       }
 
-      if (lastNode) {
-        $(lastNode).addClass('selected');
-        lastNode.scrollIntoView(false);
-
-        $(lastNode).click();
+      for (i = 0; i < handlers.length; i++) {
+        $timeout(handlers[i], 30);
       }
 
-      $('body').get(0).scrollIntoView();
+      if (lastNode) {
+        angular.element(lastNode).addClass('selected');
+
+        lastNode.scrollIntoView(false);
+
+        angular.element(lastNode).click();
+      }
+
+      angular.element('body').get(0).scrollIntoView();
     }
 
     this.open_selected_project = function (pos, selected_project) {
