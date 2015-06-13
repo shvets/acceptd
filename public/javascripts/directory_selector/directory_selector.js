@@ -16,7 +16,6 @@
       '                       selection="selection" on-selection-changed="onSelectionChanged(items)"' +
       '                       tag-name="tagName(item)">' +
       '</hierarchical-selector>',
-
       link: function (scope, element, attributes) {
         $rootScope.$on('selected_project', function (events, args) {
           var id = args.selected_project;

@@ -10,7 +10,7 @@
 
   namespace.controller('AcceptdController', AcceptdController);
 
-  function AcceptdController($scope, $http, $q, $window, Settings, AcceptdService, Progressbar) {
+  function AcceptdController($scope, $http, $q, $window, $timeout, Settings, AcceptdService, Progressbar) {
     var self = this;
 
     this.scope = $scope;
@@ -36,10 +36,32 @@
       });
     });
 
-    //this.scope.selection = selection;
-
     this.scope.$watch('$viewContentLoaded', function () {
     });
+
+    function click_on_node(node, names, index, last) {
+      var itemContainer = $(node).find('.item-container');
+
+      var list = $(itemContainer).find('.item-details');
+
+      for (var i = 0; i < list.size(); i++) {
+        var name = $(list[i]).text().trim();
+
+        if (name == names[index]) {
+          var el = $(list[i]).siblings()[0];
+
+          el.click();
+
+          $(list[i]).addClass('selected');
+
+          $timeout(function () {
+            if (!last) {
+              click_on_node(node.find('ul li'), names, index + 1, index === names.length - 1);
+            }
+          }, 50);
+        }
+      }
+    }
 
     var index = 0;
     var hasRegistered = false;
@@ -54,44 +76,14 @@
         index += 1;
 
         if (index == 5) {
-          console.log($scope.script_params.selected_project);
-
-          var root = angular.element(document.querySelector('.hierarchical-control'));
-          var root_input = angular.element(document.querySelector('.hierarchical-input'));
-          var tree_view = angular.element(document.querySelector('.tree-view'));
-
-          console.log(root_input);
+          var root_input = angular.element(document.querySelector('.hierarchical-control .hierarchical-input'));
 
           root_input.click();
 
-          var items = tree_view.find('ul li');
+          var tree_view = angular.element(document.querySelector('.hierarchical-control .tree-view'));
+          var top_level = $(tree_view).find('.top-level');
 
-          for (var i = 0; i < items.size(); i++) {
-            var item = items[i];
-            var name = $(item).text().trim();
-
-            //console.log($(item).text().trim());
-
-            ///html/body/div/div/form/div/section[2]/div/div[2]/directory-selector/div/div[2]/ul/li[16]/div/span
-            ///html/body/div/div/form/div/section[2]/div/div[2]/directory-selector/div/div[2]/ul/li[16]/ul[1]/li/div
-
-            if (name == 'Users') {
-              console.log(name);
-
-              var el = angular.element(item).find('.item-container span')[0];
-
-              console.log(el);
-
-              el.click();
-
-              var item2 = angular.element(item).find('.item-container ul li div span');
-
-              //console.log(item2);
-
-              //var el2 = item2.find('.item-container span')[0];
-              //el2.click();
-            }
-          }
+          click_on_node(top_level, $scope.script_params.selected_project.split('/').slice(1, 10), 0, false);
         }
       });
     });
