@@ -3,7 +3,7 @@
 
   var namespace = angular.module('app.acceptd.acceptd.controllers', [
     'app.settings',
-    'app.acceptd.config',
+    'app.acceptd.service',
     'app.acceptd.progressbar',
     'app.directory-selector'
   ]);
@@ -31,10 +31,26 @@
     this.acceptdService.load_config().success(function (config) {
       $scope.script_params = config;
 
-      self.acceptdService.feature_files(config).success(function (feature_files) {
+      self.acceptdService.feature_files(config.selected_project).success(function (feature_files) {
         $scope.feature_files = feature_files;
       });
     });
+    //
+    //this.scope.$watch('mySelection', function (result) {
+    //  if(result !== undefined) {
+    //    var selected_project = result[0].id;
+    //
+    //    self.acceptdService.feature_files(selected_project).success(function (feature_files) {
+    //      self.scope.feature_files = feature_files;
+    //    });
+    //
+    //    self.save_config();
+    //  }
+    //});
+
+    this.scope.selectedFiles = function () {
+      self.save_config();
+    };
 
     this.scope.$watch('$viewContentLoaded', function () {
 
@@ -42,6 +58,8 @@
   }
 
   AcceptdController.prototype.save_config = function () {
+    //this.scope.script_params.selected_project = this.scope.mySelection[0].id;
+
     this.acceptdService.save_config(this.scope.script_params);
   };
 

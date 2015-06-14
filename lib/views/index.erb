@@ -20,9 +20,6 @@
             <span class="col-lg-2">
               <button class="btn btn-info" ng-click="acceptdCtrl.navigate_to_config()">Config</button>
             </span>
-            <span class="col-lg-2">
-              <button class="btn btn-info" ng-click="acceptdCtrl.save_config()">Save</button>
-            </span>
           </div>
         </section>
 
@@ -70,7 +67,8 @@
 
           <div class="row">
             <div class="col-lg-12">
-              <select ng-model="script_params.selected_files" class="form-control" multiple size="9">
+              <select ng-model="script_params.selected_files" class="form-control" multiple size="9"
+                      ng-change='selectedFiles()'>
                 <option ng-selected="script_params.selected_files.indexOf(file) >=0"
                         ng-repeat="file in feature_files" value="{{file}}">{{file}}
                 </option>

@@ -2,7 +2,7 @@
   'use strict';
 
   var namespace = angular.module('app.acceptd.config.controllers', [
-    'app.acceptd.config'
+    'app.acceptd.service'
   ]);
 
   namespace.controller('ConfigController', ConfigController);

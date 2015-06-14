@@ -55,7 +55,7 @@
       }
 
       for (i = 0; i < handlers.length; i++) {
-        $timeout(handlers[i], 30);
+        $timeout(handlers[i], 100);
       }
 
       if (lastNode) {

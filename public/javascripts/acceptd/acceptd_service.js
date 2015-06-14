@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var namespace = angular.module('app.acceptd.config', [
+  var namespace = angular.module('app.acceptd.service', [
     'app.settings'
   ]);
 
@@ -20,8 +20,9 @@
       return $http.get(url);
     };
 
-    this.feature_files = function (config) {
-      var url = Settings.baseUrl + '/feature_files?' + this.buildParamsQuery(config, ['selected_project']);
+    this.feature_files = function (selected_project) {
+      var url = Settings.baseUrl + '/feature_files?' +
+          this.buildParamsQuery({selected_project: selected_project}, ['selected_project']);
 
       return $http.get(url);
     };
