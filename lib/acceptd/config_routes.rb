@@ -12,7 +12,7 @@ class Acceptd::ConfigRoutes < Acceptd::RoutesBase
   ACCEPTD_CONFIG_FILE_NAME = "#{ENV['HOME']}/.acceptd.yaml"
 
   get '/config' do
-    erb :config
+    erb :'acceptd/config', layout: :'acceptd/layout'
   end
 
   get '/load_config' do
@@ -22,7 +22,7 @@ class Acceptd::ConfigRoutes < Acceptd::RoutesBase
   get '/save_config' do
     save_config(ACCEPTD_CONFIG_FILE_NAME, params)
 
-    erb :index
+    erb :'acceptd/index', layout: :'acceptd/layout'
   end
 
   private

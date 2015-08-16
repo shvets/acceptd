@@ -11,11 +11,11 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
 
   get '/stylesheet.css' do
     headers 'Content-Type' => 'text/css; charset=utf-8'
-    sass :stylesheet
+    sass :'acceptd/stylesheet'
   end
 
   get '/' do
-    erb :index
+    erb :'acceptd/index', layout: :'acceptd/layout'
   end
 
   get '/feature_files' do
