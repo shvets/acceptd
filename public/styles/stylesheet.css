@@ -1,0 +1,23 @@
+.well {
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+.row {
+    margin-bottom: 0;
+}
+
+.h3 {
+    margin-top: 0;
+}
+
+.progress {
+    margin-top: 8px;
+    margin-bottom: 0;
+}
+
+.output {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+}
