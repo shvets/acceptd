@@ -1,11 +1,7 @@
 require "sinatra/reloader" if development?
 
-require 'sinatra/partial'
-
 class Acceptd::RoutesBase < Sinatra::Base
   register Sinatra::Reloader if development?
-
-  register Sinatra::Partial
 
   use Rack::Deflater
 
@@ -31,6 +27,4 @@ class Acceptd::RoutesBase < Sinatra::Base
   set :views, "#{File.expand_path(File.dirname(__FILE__))}/../../public/app"
 
   set :public_dir, "#{File.expand_path(File.dirname(__FILE__))}/../../public"
-
-  set :partial_template_engine, :erb
 end

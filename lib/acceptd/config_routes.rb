@@ -39,6 +39,8 @@ class Acceptd::ConfigRoutes < Acceptd::RoutesBase
 
       config['selected_project'] = ACCEPTD_ROOT_DIR
       config['selected_files'] = []
+
+      save_config file_name, config
     end
 
     config

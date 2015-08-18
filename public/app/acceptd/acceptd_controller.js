@@ -35,6 +35,7 @@
         $scope.feature_files = feature_files;
       });
     });
+
     //
     //this.scope.$watch('mySelection', function (result) {
     //  if(result !== undefined) {
