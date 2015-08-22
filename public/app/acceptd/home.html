@@ -80,10 +80,14 @@
         <section class="well">
           <div class="row">
             <span class="col-lg-2">
-              <button name="run_script" ng-disabled="{{progressbar.status() === 'started'}}" class="btn btn-primary" ng-click="acceptdCtrl.run_script()">Run</button>
+              <button name="run_script" ng-disabled="{{progressbar.status() === 'started'}}" class="btn btn-primary"
+                      ng-click="acceptdCtrl.run_script()">Run
+              </button>
             </span>
             <span class="col-lg-2">
-              <button name="cancel_run" ng-disabled="{{progressbar.status() != 'started'}}" class="btn btn-primary" ng-click="acceptdCtrl.cancel_run()">Cancel</button>
+              <button name="cancel_run" ng-disabled="{{progressbar.status() != 'started'}}" class="btn btn-primary"
+                      ng-click="acceptdCtrl.cancel_run()">Cancel
+              </button>
             </span>
             <span class="col-lg-2">
               <button class="btn btn-primary" ng-click="acceptdCtrl.reset_session()">Reset Session</button>

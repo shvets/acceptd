@@ -10,13 +10,14 @@
 
   namespace.controller('AcceptdController', AcceptdController);
 
-  function AcceptdController($scope, $http, $q, $window, Settings, AcceptdService, Progressbar) {
+  function AcceptdController($scope, $http, $q, $window, $state, Settings, AcceptdService, Progressbar) {
     var self = this;
 
     this.scope = $scope;
     this.http = $http;
     this.q = $q;
     this.window = $window;
+    this.state = $state;
 
     this.settings = Settings;
     this.acceptdService = AcceptdService;
@@ -65,7 +66,7 @@
   };
 
   AcceptdController.prototype.navigate_to_config = function () {
-    this.window.location = '/config';
+    this.state.transitionTo('config');
   };
 
   AcceptdController.prototype.cancel_run = function() {

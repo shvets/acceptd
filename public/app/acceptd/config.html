@@ -1,12 +1,16 @@
 <div class="container">
 
   <div class="panel panel-primary">
+    <div class="panel-heading text-center">
+      <h1><i><b>Acceptd</b></i> Control Center</h1>
+    </div>
+
     <form ng-controller="ConfigController as configCtrl">
       <div class="panel-body">
         <section class="well">
           <div class="row">
-            <span class="col-lg-1">
-              <div ng-include src="'app/acceptd/back_button.html'"></div>
+            <span class="col-lg-2">
+              <button class="btn btn-info" ng-click="configCtrl.save_and_navigate_to_home()">Back</button>
             </span>
           </div>
         </section>
@@ -52,13 +56,15 @@
             <div class="col-lg-4">
               <div class="radio">
                 <label>
-                  <input type="radio" ng-model="script_params.browser" value='firefox' ng-checked="script_params.browser == 'firefox'">
+                  <input type="radio" ng-model="script_params.browser" value='firefox'
+                         ng-checked="script_params.browser == 'firefox'">
                   Firefox
                 </label>
               </div>
               <div class="radio">
                 <label>
-                  <input type="radio" ng-model="script_params.browser" value='chrome' ng-checked="script_params.browser == 'chrome'">
+                  <input type="radio" ng-model="script_params.browser" value='chrome'
+                         ng-checked="script_params.browser == 'chrome'">
                   Chrome
                 </label>
               </div>

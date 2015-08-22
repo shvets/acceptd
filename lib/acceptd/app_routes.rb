@@ -9,13 +9,24 @@ require 'erb'
 
 class Acceptd::AppRoutes < Acceptd::RoutesBase
 
-  get '/stylesheet.css' do
-    headers 'Content-Type' => 'text/css; charset=utf-8'
-    sass :'acceptd/stylesheet'
-  end
+  # get '/stylesheet.css' do
+  #   headers 'Content-Type' => 'text/css; charset=utf-8'
+  #
+  #   sass :"styles/stylesheet"
+  # end
 
   get '/' do
-    erb :'acceptd/index', layout: :'acceptd/layout'
+    send_file File.join(settings.public_dir, '/app/acceptd/index.html')
+  end
+
+  get '/?:file_name?.html' do
+    send_file File.join(settings.public_dir, "/app/acceptd/#{params[:file_name]}.html")
+  end
+
+  get '/?:file_name?.css' do
+    headers 'Content-Type' => 'text/css; charset=utf-8'
+
+    send_file File.join(settings.public_dir, "/app/acceptd/#{params[:file_name]}.css")
   end
 
   get '/feature_files' do
@@ -56,26 +67,6 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
 
     files
   end
-
-  # def projects workspace_dir
-  #   projects = []
-  #
-  #   files = Dir.glob("#{workspace_dir}/*")
-  #
-  #   files.each do |file|
-  #     short_name = file[workspace_dir.size+1..-1]
-  #
-  #     if File.directory?(file)
-  #       feature_files = Dir.glob("#{file}/**/*.feature")
-  #
-  #       if File.basename(short_name) != 'support' and feature_files.size > 0
-  #         projects << short_name
-  #       end
-  #     end
-  #   end
-  #
-  #   projects
-  # end
 
   def execute_scripts params
     execute_scripts_as_cmd params

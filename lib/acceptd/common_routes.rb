@@ -2,10 +2,6 @@ require "acceptd/routes_base"
 
 class Acceptd::CommonRoutes < Acceptd::RoutesBase
 
-  get '/?:file_name?.html' do
-    erb params[:file_name]
-  end
-
   get "*" do
     status 404
   end

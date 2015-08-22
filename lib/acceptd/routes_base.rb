@@ -24,7 +24,7 @@ class Acceptd::RoutesBase < Sinatra::Base
   #   content_type 'application/xml'
   # end
 
-  set :views, "#{File.expand_path(File.dirname(__FILE__))}/../../public/app"
+  #set :views, "#{File.expand_path(File.dirname(__FILE__))}/../../public/app"
 
   set :public_dir, "#{File.expand_path(File.dirname(__FILE__))}/../../public"
 end

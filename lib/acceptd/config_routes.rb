@@ -5,14 +5,13 @@ require 'active_support/core_ext/hash'
 require 'script_executor'
 require 'rspec'
 require 'capybara'
-require 'erb'
 
 class Acceptd::ConfigRoutes < Acceptd::RoutesBase
   ACCEPTD_ROOT_DIR = File.expand_path(".")
   ACCEPTD_CONFIG_FILE_NAME = "#{ENV['HOME']}/.acceptd.yaml"
 
   get '/config' do
-    erb :'acceptd/config', layout: :'acceptd/layout'
+    send_file File.join(settings.public_dir, '/app/acceptd/config.html')
   end
 
   get '/load_config' do
@@ -21,8 +20,6 @@ class Acceptd::ConfigRoutes < Acceptd::RoutesBase
 
   get '/save_config' do
     save_config(ACCEPTD_CONFIG_FILE_NAME, params)
-
-    erb :'acceptd/index', layout: :'acceptd/layout'
   end
 
   private
