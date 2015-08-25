@@ -7,12 +7,13 @@
 
   namespace.controller('ConfigController', ConfigController);
 
-  function ConfigController($scope, $http, $q, $window, AcceptdService) {
+  function ConfigController($scope, $http, $q, $window, $state, AcceptdService) {
     this.scope = $scope;
     this.http = $http;
     this.q = $q;
-
     this.window = $window;
+    this.state = $state;
+
     this.acceptdService = AcceptdService;
 
     this.scope.script_params = {};
@@ -26,7 +27,7 @@
   ConfigController.prototype.save_and_navigate_to_home = function () {
     this.acceptdService.save_config(this.scope.script_params);
 
-    this.window.location = '/';
+    this.state.transitionTo('home');
   };
 
 })();

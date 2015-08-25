@@ -10,9 +10,9 @@ ENV['CONFIG_DIR'] = "#{selected_project}"
 ENV['DATA_DIR'] = "#{selected_project}/acceptance_data"
 
 AcceptanceConfig.instance.configure("#{selected_project}", {
-                                                           app_name: File.basename(selected_project),
-  enable_external_source: true,
-  ignore_case_in_steps: true
+    app_name: File.basename(selected_project),
+    enable_external_source: true,
+    ignore_case_in_steps: true
 })
 
 AcceptanceTest.instance.configure({

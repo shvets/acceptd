@@ -10,10 +10,6 @@ class Acceptd::ConfigRoutes < Acceptd::RoutesBase
   ACCEPTD_ROOT_DIR = File.expand_path(".")
   ACCEPTD_CONFIG_FILE_NAME = "#{ENV['HOME']}/.acceptd.yaml"
 
-  get '/config' do
-    send_file File.join(settings.public_dir, '/app/acceptd/config.html')
-  end
-
   get '/load_config' do
     load_config(ACCEPTD_CONFIG_FILE_NAME).to_json
   end

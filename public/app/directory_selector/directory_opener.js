@@ -21,7 +21,10 @@
     }
 
     function click_next_node(node, names, index) {
-      var last = index === names.length - 1;
+      var last = index == names.length - 1;
+
+      console.log(index);
+      console.log(last);
 
       var lastNode = null;
       var handlers = [];
@@ -57,6 +60,8 @@
       for (i = 0; i < handlers.length; i++) {
         $timeout(handlers[i], 100);
       }
+
+      console.log(lastNode);
 
       if (lastNode) {
         angular.element(lastNode).addClass('selected');

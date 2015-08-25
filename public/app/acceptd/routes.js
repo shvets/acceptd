@@ -14,12 +14,12 @@
     $stateProvider
       .state('home', {
         url: '/',
-          templateUrl: '/app/acceptd/home.html',
+            templateUrl: '/app/acceptd/home.html',
         controller: 'AcceptdController'
       })
       .state('config', {
-        url: '/config',
-          templateUrl: '/app/acceptd/config.html',
+            url: '/config.html',
+            templateUrl: '/app/acceptd/config.html',
         controller: 'ConfigController'
       });
   });
