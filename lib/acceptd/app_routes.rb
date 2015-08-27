@@ -15,17 +15,17 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
   #   sass :"styles/stylesheet"
   # end
 
-  get '/' do
-    send_file File.join(settings.public_dir, '/app/acceptd/index.html')
-  end
+  # get '/' do
+  #   send_file File.join(settings.public_dir, '/app/acceptd/index.html')
+  # end
 
   # get '/config' do
   #   send_file File.join(settings.public_dir, '/app/acceptd/config.html')
   # end
 
-  get '/?:file_name?.html' do
-    send_file File.join(settings.public_dir, "/app/acceptd/#{params[:file_name]}.html")
-  end
+  # get '/?:file_name?.html' do
+  #   send_file File.join(settings.public_dir, "/app/acceptd/#{params[:file_name]}.html")
+  # end
 
   get '/?:file_name?.css' do
     headers 'Content-Type' => 'text/css; charset=utf-8'

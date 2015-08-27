@@ -12,13 +12,19 @@
 
   namespace.config(function ($stateProvider) {
     $stateProvider
+        //.state('app', {
+        //  abstract: true,
+        //  templateUrl: '/app/acceptd/index.html'
+        //})
       .state('home', {
+            //parent: "app",
         url: '/',
             templateUrl: '/app/acceptd/home.html',
         controller: 'AcceptdController'
       })
       .state('config', {
-            url: '/config.html',
+            //parent: "app",
+            url: '/config',
             templateUrl: '/app/acceptd/config.html',
         controller: 'ConfigController'
       });
