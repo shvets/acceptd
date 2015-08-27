@@ -27,10 +27,24 @@ class Acceptd::AppRoutes < Acceptd::RoutesBase
   #   send_file File.join(settings.public_dir, "/app/acceptd/#{params[:file_name]}.html")
   # end
 
-  get '/?:file_name?.css' do
+  get '/*/?:file_name?.js' do
+    headers 'Content-Type' => 'application/javascript'
+
+    path = params[:splat][0]
+
+    path = "../#{path}" if path =~ /node_modules/
+
+    send_file File.join(settings.public_dir, "#{path}/#{params[:file_name]}.js")
+  end
+
+  get '/*/?:file_name?.css' do
     headers 'Content-Type' => 'text/css; charset=utf-8'
 
-    send_file File.join(settings.public_dir, "/app/acceptd/#{params[:file_name]}.css")
+    path = params[:splat][0]
+
+    path = "../#{path}" if path =~ /node_modules/
+
+    send_file File.join(settings.public_dir, "#{path}/#{params[:file_name]}.css")
   end
 
   get '/feature_files' do

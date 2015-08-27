@@ -7,7 +7,7 @@ group :development do
 end
 
 group :default do
-  gem"rspec"
+  gem "rspec"
   gem "sinatra"
   gem 'multi_json'
   gem "yajl-ruby"
