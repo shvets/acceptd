@@ -23,9 +23,6 @@
     function click_next_node(node, names, index) {
       var last = index == names.length - 1;
 
-      console.log(index);
-      console.log(last);
-
       var lastNode = null;
       var handlers = [];
 
@@ -61,8 +58,6 @@
         $timeout(handlers[i], 100);
       }
 
-      console.log(lastNode);
-
       if (lastNode) {
         angular.element(lastNode).addClass('selected');
 
@@ -89,7 +84,9 @@
             index += 1;
 
             if (index == pos) {
-              click_first_node(element, selected_project());
+              $timeout(function () {
+                click_first_node(element, selected_project());
+              }, 0);
             }
           });
         }
