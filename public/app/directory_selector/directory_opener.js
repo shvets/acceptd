@@ -21,18 +21,18 @@
 
       var selectedIndex = find_selected_index(list, names[1]);
 
+      click_next_node(top_level, list, selectedIndex, names.slice(1, names.length), 0, false);
+    }
+
+    function click_next_node(node, list, selectedIndex, names, index, last) {
       if (selectedIndex >= 0) {
         var elementToClick = angular.element(list[selectedIndex]);
 
         var expando = elementToClick.parent().children()[0];
 
         angular.element(expando).triggerHandler('click');
-
-        click_next_node(top_level, list, selectedIndex, names.slice(1, names.length), 0, false);
       }
-    }
 
-    function click_next_node(node, list, selectedIndex, names, index, last) {
       var handler = function () {
         var children = node.find('ul li');
 
@@ -42,32 +42,24 @@
 
         var selectedIndex = find_selected_index(list, names[index + 1]);
 
-        if (selectedIndex >= 0) {
-          var elementToClick = angular.element(list[selectedIndex]);
-
-          var expando = elementToClick.parent().children()[0];
-
-          angular.element(expando).triggerHandler('click');
-
-          click_next_node(children, list, selectedIndex, names, index + 1, index + 1 == names.length - 1);
-        }
+        click_next_node(children, list, selectedIndex, names, index + 1, index + 1 == names.length - 1);
       };
 
-      $timeout(handler, 100);
+      $timeout(handler, 100).then(function () {
+        if (last) {
+          var lastNode = list[selectedIndex];
 
-      if (last) {
-        var lastNode = list[selectedIndex];
+          var handler = function () {
+            angular.element(lastNode).addClass('selected');
 
-        var handler = function () {
-          angular.element(lastNode).addClass('selected');
+            lastNode.scrollIntoView(false);
 
-          lastNode.scrollIntoView(false);
+            angular.element(lastNode).click();
+          };
 
-          angular.element(lastNode).click();
-        };
-
-        $timeout(handler, 100);
-      }
+          $timeout(handler, 100);
+        }
+      });
     }
 
     function find_selected_index(list, selectedName) {
