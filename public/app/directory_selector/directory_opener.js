@@ -15,17 +15,57 @@
       var tree_view = angular.element(document.querySelector('.hierarchical-control .tree-view'));
       var top_level = tree_view.find('.top-level');
 
-      click_next_node(top_level, names.slice(1, names.length), 0, false);
-    }
-
-    function click_next_node(node, names, index, last) {
-      var lastNode = null;
-
-      var itemContainer = node.find('.item-container');
+      var itemContainer = top_level.find('.item-container');
 
       var list = itemContainer.find('.item-details');
 
-      var elementToClick = null;
+      var selectedIndex = find_selected_index(list, names[1]);
+
+      if (selectedIndex >= 0) {
+        click_next_node(top_level, list, selectedIndex, names.slice(1, names.length), 0, false);
+      }
+    }
+
+    function click_next_node(node, list, selectedIndex, names, index, last) {
+      var elementToClick = angular.element(list[selectedIndex]);
+
+        var expando = elementToClick.parent().children()[0];
+
+        angular.element(expando).triggerHandler('click');
+
+        var handler = function () {
+          var children = node.find('ul li');
+
+          var itemContainer = node.find('.item-container');
+
+          var list = itemContainer.find('.item-details');
+
+          var selectedIndex = find_selected_index(list, names[index + 1]);
+
+          if (selectedIndex >= 0) {
+            click_next_node(children, list, selectedIndex, names, index + 1, index + 1 == names.length - 1);
+          }
+        };
+
+        $timeout(handler, 100);
+
+      if (last) {
+        var lastNode = list[selectedIndex];
+
+        var handler = function () {
+          angular.element(lastNode).addClass('selected');
+
+          lastNode.scrollIntoView(false);
+
+          angular.element(lastNode).click();
+        };
+
+        $timeout(handler, 100);
+      }
+    }
+
+    function find_selected_index(list, selectedName) {
+      var selectedIndex = -1;
 
       // Find next element in path to click on
       for (var i = 0; i < list.size(); i++) {
@@ -33,41 +73,14 @@
 
         var name = element.text().trim();
 
-        if (name == names[index]) {
-          elementToClick = element;
+        if (name == selectedName) {
+          selectedIndex = i;
 
           break;
         }
       }
 
-      if (elementToClick) {
-        var expando = elementToClick.parent().children()[0];
-
-        angular.element(expando).triggerHandler('click');
-
-        if (last) {
-          lastNode = list[i];
-        }
-
-        var handler = function () {
-          var children = node.find('ul li');
-
-          click_next_node(children, names, index + 1, index + 1 == names.length - 1);
-        };
-
-        $timeout(handler, 100);
-      }
-
-      // Scroll to the last element
-      if (lastNode) {
-        angular.element(lastNode).addClass('selected');
-
-        lastNode.scrollIntoView(false);
-
-        angular.element(lastNode).click();
-      }
-
-      //angular.element('body').get(0).scrollIntoView();
+      return selectedIndex;
     }
 
     this.open_selected_project = function (scope, element, pos, selected_project) {
