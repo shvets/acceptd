@@ -22,32 +22,38 @@
       var selectedIndex = find_selected_index(list, names[1]);
 
       if (selectedIndex >= 0) {
-        click_next_node(top_level, list, selectedIndex, names.slice(1, names.length), 0, false);
-      }
-    }
-
-    function click_next_node(node, list, selectedIndex, names, index, last) {
-      var elementToClick = angular.element(list[selectedIndex]);
+        var elementToClick = angular.element(list[selectedIndex]);
 
         var expando = elementToClick.parent().children()[0];
 
         angular.element(expando).triggerHandler('click');
 
-        var handler = function () {
-          var children = node.find('ul li');
+        click_next_node(top_level, list, selectedIndex, names.slice(1, names.length), 0, false);
+      }
+    }
 
-          var itemContainer = node.find('.item-container');
+    function click_next_node(node, list, selectedIndex, names, index, last) {
+      var handler = function () {
+        var children = node.find('ul li');
 
-          var list = itemContainer.find('.item-details');
+        var itemContainer = node.find('.item-container');
 
-          var selectedIndex = find_selected_index(list, names[index + 1]);
+        var list = itemContainer.find('.item-details');
 
-          if (selectedIndex >= 0) {
-            click_next_node(children, list, selectedIndex, names, index + 1, index + 1 == names.length - 1);
-          }
-        };
+        var selectedIndex = find_selected_index(list, names[index + 1]);
 
-        $timeout(handler, 100);
+        if (selectedIndex >= 0) {
+          var elementToClick = angular.element(list[selectedIndex]);
+
+          var expando = elementToClick.parent().children()[0];
+
+          angular.element(expando).triggerHandler('click');
+
+          click_next_node(children, list, selectedIndex, names, index + 1, index + 1 == names.length - 1);
+        }
+      };
+
+      $timeout(handler, 100);
 
       if (last) {
         var lastNode = list[selectedIndex];
