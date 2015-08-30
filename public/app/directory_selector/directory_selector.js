@@ -27,7 +27,7 @@
           });
         });
 
-        DirectoryOpener.open_selected_project(scope, element, 5, function () {
+        DirectoryOpener.openSelectedProject(scope, element, 5, function () {
           return scope.script_params.selected_project;
         });
 

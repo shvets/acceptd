@@ -7,7 +7,7 @@
 
   function DirectoryOpener($timeout) {
 
-    function click_first_node(element, names) {
+    function clickFirstNode(element, names) {
       var root_input = element.find('.hierarchical-control .hierarchical-input');
 
       root_input.triggerHandler('click');
@@ -19,19 +19,19 @@
 
       var list = itemContainer.find('.item-details');
 
-      var selectedIndex = find_selected_index(list, names[1]);
+      var selectedIndex = findSelectedIndex(list, names[0]);
 
-      click_next_node(top_level, list, selectedIndex, names.slice(1, names.length), 0, false);
+      if (selectedIndex >= 0) {
+        clickNextNode(top_level, list, selectedIndex, names, 0);
+      }
     }
 
-    function click_next_node(node, list, selectedIndex, names, index, last) {
-      if (selectedIndex >= 0) {
-        var elementToClick = angular.element(list[selectedIndex]);
+    function clickNextNode(node, list, selectedIndex, names, index) {
+      var elementToClick = angular.element(list[selectedIndex]);
 
-        var expando = elementToClick.parent().children()[0];
+      var expando = elementToClick.parent().children()[0];
 
-        angular.element(expando).triggerHandler('click');
-      }
+      angular.element(expando).triggerHandler('click');
 
       var handler = function () {
         var children = node.find('ul li');
@@ -40,13 +40,19 @@
 
         var list = itemContainer.find('.item-details');
 
-        var selectedIndex = find_selected_index(list, names[index + 1]);
+        var selectedIndex = findSelectedIndex(list, names[index + 1]);
 
-        click_next_node(children, list, selectedIndex, names, index + 1, index + 1 == names.length - 1);
+        if (selectedIndex >= 0) {
+          clickNextNode(children, list, selectedIndex, names, index + 1);
+        }
       };
 
-      $timeout(handler, 100).then(function () {
-        if (last) {
+      var promise = $timeout(handler, 200);
+
+      var last = index == names.length - 1;
+
+      if (last) {
+        promise.then(function () {
           var lastNode = list[selectedIndex];
 
           var handler = function () {
@@ -57,31 +63,28 @@
             angular.element(lastNode).click();
           };
 
-          $timeout(handler, 100);
-        }
-      });
+          $timeout(handler, 200);
+        });
+      }
     }
 
-    function find_selected_index(list, selectedName) {
+    function findSelectedIndex(list, selectedName) {
       var selectedIndex = -1;
 
-      // Find next element in path to click on
-      for (var i = 0; i < list.size(); i++) {
-        var element = angular.element(list[i]);
+      angular.forEach(list, function (value, key) {
+        var element = angular.element(value);
 
         var name = element.text().trim();
 
         if (name == selectedName) {
-          selectedIndex = i;
-
-          break;
+          selectedIndex = key;
         }
-      }
+      });
 
       return selectedIndex;
     }
 
-    this.open_selected_project = function (scope, element, pos, selected_project) {
+    this.openSelectedProject = function (scope, element, pos, selected_project) {
       var index = 0;
       var hasRegistered = false;
 
@@ -97,9 +100,9 @@
 
             if (index == pos) {
               $timeout(function () {
-                var path = selected_project();
+                var names = selected_project().split('/');
 
-                click_first_node(element, path.split('/'));
+                clickFirstNode(element, names.slice(1, names.length));
               }, 0);
             }
           });
