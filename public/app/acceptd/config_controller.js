@@ -7,11 +7,9 @@
 
   namespace.controller('ConfigController', ConfigController);
 
-  function ConfigController($scope, $http, $q, $window, $state, AcceptdService) {
+  function ConfigController($scope, $http, $state, AcceptdService) {
     this.scope = $scope;
     this.http = $http;
-    this.q = $q;
-    this.window = $window;
     this.state = $state;
 
     this.acceptdService = AcceptdService;
@@ -28,6 +26,14 @@
     this.acceptdService.save_config(this.scope.script_params);
 
     this.state.transitionTo('home');
+  };
+
+  ConfigController.prototype.load_project_config = function () {
+    var self = this;
+
+    this.acceptdService.load_project_config('/Users/alex/Dropbox/Alex/work/projects/acceptd/workspace/wikipedia/wikipedia.yml').success(function (params) {
+      self.scope.script_params = params;
+    });
   };
 
 })();

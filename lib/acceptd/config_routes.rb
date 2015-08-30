@@ -8,10 +8,14 @@ require 'capybara'
 
 class Acceptd::ConfigRoutes < Acceptd::RoutesBase
   ACCEPTD_ROOT_DIR = File.expand_path(".")
-  ACCEPTD_CONFIG_FILE_NAME = "#{ENV['HOME']}/.acceptd.yaml"
+  ACCEPTD_CONFIG_FILE_NAME = "#{ENV['HOME']}/.acceptd.yml"
 
   get '/load_config' do
     load_config(ACCEPTD_CONFIG_FILE_NAME).to_json
+  end
+
+  get '/load_project_config' do
+    load_project_config(params['fileName']).to_json
   end
 
   get '/save_config' do
@@ -34,6 +38,21 @@ class Acceptd::ConfigRoutes < Acceptd::RoutesBase
       config['selected_files'] = []
 
       save_config file_name, config
+    end
+
+    config
+  end
+
+  def load_project_config file_name
+    config = File.exist?(file_name) ? YAML.load_file(file_name) : {}
+
+    if File.exist?(file_name)
+      config = YAML.load_file(file_name)
+
+      config['selected_project'] = File.dirname(file_name)
+      config['selected_files'] = []
+    else
+      load_config(ACCEPTD_CONFIG_FILE_NAME)
     end
 
     config

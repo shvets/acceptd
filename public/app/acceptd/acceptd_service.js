@@ -14,6 +14,14 @@
       });
     };
 
+    this.load_project_config = function (fileName) {
+      var url = Settings.baseUrl + "/load_project_config?" + "fileName=" + fileName;
+
+      return $http.get(url).success(function (config) {
+        $rootScope.$broadcast('selected_project', {selected_project: config.selected_project});
+      });
+    };
+
     this.save_config = function (config) {
       var url = Settings.baseUrl + '/save_config?' + this.buildParamsQuery(config);
 

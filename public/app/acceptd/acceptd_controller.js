@@ -37,26 +37,9 @@
       });
     });
 
-    //
-    //this.scope.$watch('mySelection', function (result) {
-    //  if(result !== undefined) {
-    //    var selected_project = result[0].id;
-    //
-    //    self.acceptdService.feature_files(selected_project).success(function (feature_files) {
-    //      self.scope.feature_files = feature_files;
-    //    });
-    //
-    //    self.save_config();
-    //  }
-    //});
-
     this.scope.selectedFiles = function () {
       self.save_config();
     };
-
-    this.scope.$watch('$viewContentLoaded', function () {
-
-    });
   }
 
   AcceptdController.prototype.save_config = function () {
